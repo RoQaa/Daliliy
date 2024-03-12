@@ -39,7 +39,7 @@ const signToken = (id) => {
      
       data: {
         name: user.name,
-        email:user.email,
+       // email:user.email,
        // photo: user.photo,
         //isPaid: user.isPaid,
         role: user.role,
