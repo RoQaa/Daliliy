@@ -1,21 +1,23 @@
 const express=require('express');
 const router = express.Router();
 const authController=require('../controllers/authController')
-const categoryController=require('../controllers/categoryController')
+const itemController=require('../controllers/itemController')
+
 
 
 
 // Protect all routes after this middleware
 router.use(authController.protect)
 
-router.get('/getCats',categoryController.getCategories)
+router.get('/getItems',itemController.getItems)
+
 
 
 
 // Restrict all routes after this middleware
 router.use(authController.restrictTo('admin'));
 
-router.post('/addCat',categoryController.addCategory)
+router.post('/addItem',itemController.addItem)
 
 
 
