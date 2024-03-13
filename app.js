@@ -8,6 +8,7 @@ const xss = require('xss-clean'); // security
 const fileUpload = require('express-fileupload');
 const AppError = require('./utils/appError');
 const userRouter=require('./routes/userRouter')
+const categoryRouter=require('./routes/categoryRouter')
 const globalErrorHandler = require('./controllers/errorController');
 const app = express();
 
@@ -67,7 +68,7 @@ app.use((req, res, next) => {
 
 //Routes
 app.use('/api/auth',userRouter)
-
+app.use('/api/cats',categoryRouter)
 
 app.all('*', (req, res, next) => {
   // const err = new Error(`Can't find the url ${req.originalUrl} on this server`);

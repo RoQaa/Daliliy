@@ -5,7 +5,10 @@ const authController=require('../controllers/authController')
 
 router.post('/signUp', authController.SignUp);
 router.post('/login', authController.login);
-router.get('/data',authController.protect,authController.getUserData)
+
+// Protect all routes after this middleware
+router.use(authController.protect)
+
 
 
 

@@ -61,14 +61,14 @@ const signToken = (id) => {
   
    
   
-    //createSendToken(newUser,201,"sign up successfully",res);
+    createSendToken(newUser,201,"sign up successfully",res);
     
-      res.status(200).json({
+    /*  res.status(201).json({
         status: true,
         message: 'Sign up Successfully',
         notError: { statusCode: 200 },
       });
-    
+    */
  
   });
   
@@ -171,17 +171,3 @@ const signToken = (id) => {
     };
   };
 
-//test
-  exports.getUserData=catchAsync(async(req,res,next)=>{
-    const data = await User.find();
-    if(data.length===0){
-        res.status(404).json({
-            status:false,
-            message:"There's no data"
-        })
-    }
-  })
-
-  /**    // Restrict all routes after this middleware
-router.use(authController.restrictTo('admin'));
- */

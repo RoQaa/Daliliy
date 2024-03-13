@@ -68,6 +68,18 @@ userSchema.methods.correctPassword = async function (
     return await bcrypt.compare(candidatePassword, userPassword); // compare bt3mal hash le candidate we btcompare b3deha
   };
 
+  
+userSchema.methods.changesPasswordAfter = function (JWTTimestamps) {
+    if (this.passwordChangedAt) {
+      const changedTimestamps = parseInt(
+        this.passwordChangedAt.getTime() / 1000,
+        10
+      ); //=> 10 min
+      //console.log(changedTimestamps,JWTTimestamps);
+      return JWTTimestamps < changedTimestamps;
+    }
+    return false;
+  };
 
   const User = mongoose.model('User',userSchema);
   module.exports=User;
