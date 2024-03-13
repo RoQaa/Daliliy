@@ -7,38 +7,40 @@ const AppError = require('../utils/appError');
 exports.getItems = catchAsync(async (req, res, next) => {
 
     const data = await Item.aggregate([
-
-
-
         {
-            $lookup: {
-                from: Category.collection.name,
-                localField: 'category',
-                foreignField: '_id',
-                pipeline: [
-                    {
-                        $project: {
-                            title: 1
-                        },
-                    },
-                    {
-                        $match:{
-                            title:req.body.title
-                        }
-                    }
-               
-                ],
-                as: 'category',
-            },
+          $lookup: {
+            from: Category.collection.name,
+            localField: 'category',
+            foreignField: '_id',
+            pipeline: [
+              {
+                $project: {
+                  title: 1,
+                },
+              },
+              {
+                $match: {
+                  title: req.body.title,
+                },
+              },
+            ],
+            as: 'category',
+          },
         },
+        {
+          $match: {
+            'category.title': req.body.title,
+          },
+        },
+        {
+          $project: {
+            __v: 0,
+          },
+        },
+      ]);
+      
      
-
-        {
-            $project: {
-                __v: 0,
-            },
-        },
-    ]);
+      
      if(!data||data.length===0){
          return next(new AppError(`data n't found`,404));
      }

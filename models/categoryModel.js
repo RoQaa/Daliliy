@@ -8,17 +8,12 @@ const categorySchema=mongoose.Schema({
     },
     image:{
         type:String,
-        required:[true,'Please Enter  an Image'],
+        required:[true,'Please Enter Image'],
        
     }
-},
-{
-   
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  })
+})
 
 
 const Category=mongoose.model('Category',categorySchema);
 
-module.exports=Category;
+module.exports=Category
