@@ -79,3 +79,19 @@ res.status(200).json({
 })
 
 })
+
+exports.search=catchAsync(async(req,res,next)=>{
+  
+  const data = await Item.find({
+    $text:{
+      $search:req.body.word
+      
+    }
+  })
+  
+
+  res.status(200).json({
+    status:true,
+    data
+  })
+})

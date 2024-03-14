@@ -11,7 +11,7 @@ router.use(authController.protect)
 
 router.get('/getItems',itemController.getItems)
 router.get('/getSpecificItem',itemController.getSpecificItem)
-
+router.get('/search',itemController.search)
 
 
 // Restrict all routes after this middleware

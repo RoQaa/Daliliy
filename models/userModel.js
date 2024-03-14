@@ -1,6 +1,8 @@
 const mongoose=require('mongoose')
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const otpGenerator = require('otp-generator');
 const userSchema = new mongoose.Schema({
     name:{
         type:String,
@@ -38,7 +40,8 @@ const userSchema = new mongoose.Schema({
           message: 'Passwords are not the same',
         },
       },
-    
+      passwordOtp: String,
+      passwordOtpExpires: Date,
 }, {
     //timestamps: true,
     toJSON: { virtuals: true },
@@ -79,6 +82,18 @@ userSchema.methods.changesPasswordAfter = function (JWTTimestamps) {
       return JWTTimestamps < changedTimestamps;
     }
     return false;
+  };
+
+
+
+  userSchema.methods.generateOtp = async function () {
+    const OTP = otpGenerator.generate(process.env.OTP_LENGTH, {
+      upperCaseAlphabets: true,
+      specialChars: false,
+    });
+    this.passwordOtp = crypto.createHash('sha256').update(OTP).digest('hex');
+    this.passwordOtpExpires = Date.now() + 10 * 60 * 1000;
+    return OTP;
   };
 
   const User = mongoose.model('User',userSchema);

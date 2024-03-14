@@ -1,4 +1,5 @@
 const mongoose=require('mongoose');
+
 const itemSchema=new mongoose.Schema({
     name:{
         type:String,
@@ -41,6 +42,7 @@ const itemSchema=new mongoose.Schema({
 
   })
 
+  itemSchema.index({ name: 'text', description: 'text' });
   const Item=mongoose.model('Item',itemSchema)
 
   module.exports=Item;
