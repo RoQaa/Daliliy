@@ -2,6 +2,7 @@ const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const bcrypt=require('bcryptjs');
 const crypto = require('crypto');
+const validator = require('validator');
 const User = require('../models/userModel')
 const { catchAsync } = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
@@ -79,12 +80,17 @@ const signToken = (id) => {
     if (!email || !password) {
       return next(new AppError('please provide email & password', 400));
     }
-
+    const validEmail = validator.isEmail(email);
+    if (!validEmail) {
+     
+      return next(new AppError(`Please provide a correct email`));
+    }
     //2)check user exists && password is correct
+    
     const user = await User.findOne({ email: email }).select('+password'); // hyzaod el password el m5fee aslan
   
     //const correct=await user.correctPassword(password,user.password);
-  console.log(await bcrypt.hash(password, 12),user.password);
+  
     if (
       !user ||
       !(
