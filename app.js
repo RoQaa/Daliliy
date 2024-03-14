@@ -10,6 +10,7 @@ const AppError = require('./utils/appError');
 const userRouter=require('./routes/userRouter')
 const categoryRouter=require('./routes/categoryRouter')
 const itemsRouter=require('./routes/itemRouter')
+const reviewRouter=require('./routes/reviewRouter')
 const globalErrorHandler = require('./controllers/errorController');
 const app = express();
 
@@ -71,6 +72,7 @@ app.use((req, res, next) => {
 app.use('/api/auth',userRouter)
 app.use('/api/cats',categoryRouter)
 app.use('/api/items',itemsRouter)
+app.use('/api/reviews',reviewRouter)
 app.all('*', (req, res, next) => {
   // const err = new Error(`Can't find the url ${req.originalUrl} on this server`);
   // err.status='fail';

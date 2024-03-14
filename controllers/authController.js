@@ -83,7 +83,7 @@ const signToken = (id) => {
     const validEmail = validator.isEmail(email);
     if (!validEmail) {
      
-      return next(new AppError(`Please provide a correct email`));
+      return next(new AppError(`Please provide a correct email`,400));
     }
     //2)check user exists && password is correct
     

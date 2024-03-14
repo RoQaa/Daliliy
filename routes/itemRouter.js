@@ -10,7 +10,7 @@ const itemController=require('../controllers/itemController')
 router.use(authController.protect)
 
 router.get('/getItems',itemController.getItems)
-
+router.get('/getSpecificItem',itemController.getSpecificItem)
 
 
 

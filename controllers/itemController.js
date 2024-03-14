@@ -35,6 +35,9 @@ exports.getItems = catchAsync(async (req, res, next) => {
         {
           $project: {
             __v: 0,
+            category:0,
+            images:0,
+            About:0
           },
         },
       ]);
@@ -65,4 +68,14 @@ exports.addItem = catchAsync(async (req, res, next) => {
 })
 
 
+exports.getSpecificItem=catchAsync(async(req,res,next)=>{
+const item=await Item.findById(req.body.itemId);
+if(!item){
+    return next(new AppError(`item not found`,404))
+}
+res.status(200).json({
+    status:true,
+    data:item   
+})
 
+})
