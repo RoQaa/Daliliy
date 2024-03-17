@@ -1,11 +1,12 @@
 const express = require('express');
 const morgan = require('morgan');
 const morganBody = require('morgan-body');
+const path=require('path')
 const rateLimit = require('express-rate-limit'); // security
 const helmet = require('helmet'); // security
 const mongoSanitize = require('express-mongo-sanitize'); // security
 const xss = require('xss-clean'); // security
-const fileUpload = require('express-fileupload');
+
 const AppError = require('./utils/appError');
 const userRouter=require('./routes/userRouter')
 const categoryRouter=require('./routes/categoryRouter')
@@ -35,13 +36,7 @@ const limiter = rateLimit({
   message: 'too many requests please try again later',
 });
 
-app.use(
-  fileUpload({
-    //for upload files
-    useTempFiles: true,
-    tempFileDir: '/tmp',
-  })
-);
+
 app.use('/api', limiter); // (/api)=> all routes start with /api
 
 //Body parser,reading data from body into req.body

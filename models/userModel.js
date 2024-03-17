@@ -40,6 +40,14 @@ const userSchema = new mongoose.Schema({
           message: 'Passwords are not the same',
         },
       },
+      profileImage:{
+        type:String,
+        default:"https://img.freepik.com/free-vector/mysterious-gangster-character-illustration_23-2148460670.jpg?w=826&t=st=1710593066~exp=1710593666~hmac=135e860a9c843230a617ae9f3b8838ad2424f468bef2ee4a354bffd879ec5063"
+      },
+      isActive:{
+        type:Boolean,
+        default:true
+      },
       passwordOtp: String,
       passwordOtpExpires: Date,
 }, {
@@ -60,7 +68,11 @@ userSchema.pre('save', async function (next) {
   
     next();
   });
-
+  userSchema.pre(/^find/, function (next) {
+    this.find({ active: { $ne: false } }).select('-createdAt -rating');
+    next();
+  });
+  
 
 
   //instance method check password login

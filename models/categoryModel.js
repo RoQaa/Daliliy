@@ -8,7 +8,8 @@ const categorySchema=mongoose.Schema({
     },
     image:{
         type:String,
-        required:[true,'Please Enter Image'],
+      //  required:[true,'Please Enter Image'],
+      default:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR63XIy9VsNtzBDN5WqZPXvBpoHdmq8YUlSYEfwNghm0Q&s'
        
     }
 })

@@ -16,7 +16,7 @@ router.get('/getCats',categoryController.getCategories)
 router.use(authController.restrictTo('admin'));
 
 router.post('/addCat',categoryController.addCategory)
-
+router.patch('/updateCategory/:id',categoryController.uploadCatPhoto,categoryController.resizeCatPhoto,categoryController.updateCategory)
 
 
 

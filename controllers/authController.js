@@ -189,13 +189,15 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
 
 exports.logOut = catchAsync(async (req, res, next) => {
-  res.clearCookie('jwt');
-  req.headers.authorization = undefined;
- 
+  res.cookie('jwt','loggedout',{
+    expires:new Date(Date.now()+10*1000),
+    httpOnly:true
+  });
+
     res.status(200).json({
       status: true,
-      message: 'You log out Successfully',
-       token:""
+      message: 'You logged out',
+      token:""
     });
   });
 

@@ -18,7 +18,7 @@ router.get('/search',itemController.search)
 router.use(authController.restrictTo('admin'));
 
 router.post('/addItem',itemController.addItem)
-
+router.patch('/updateItem/:id',itemController.uploadItemsPhotos,itemController.resizeItemsImages,itemController.updateItem)
 
 
 
