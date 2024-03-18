@@ -38,7 +38,7 @@ const sendEmail=async (options) => {
         subject:options.subject,
         
         //html:
-        template:'index2',
+        template:'index',
         context:{
             name:options.name,
             otp:options.otp

@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const validator = require('validator');
 const User = require('../models/userModel')
+const sendEmail=require('../utils/email')
 const { catchAsync } = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
@@ -108,7 +109,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   );
   if (!user) {
 
-    return next(new AppError('There is no user with email address.', 404));
+    return next(new AppError('Email not Found.', 404));
   }
 
 
