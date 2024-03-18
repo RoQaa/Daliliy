@@ -17,7 +17,7 @@ router.use(authController.restrictTo('admin'));
 
 router.post('/addCat',categoryController.addCategory)
 router.patch('/updateCategory/:id',categoryController.uploadCatPhoto,categoryController.resizeCatPhoto,categoryController.updateCategory)
-
+router.delete('/deleteCategory/:id',categoryController.deleteCategory)
 
 
 

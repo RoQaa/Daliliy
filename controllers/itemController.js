@@ -4,10 +4,6 @@ const Item = require('../models/itemModel')
 const Category = require('../models/categoryModel')
 const { catchAsync } = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-
-
-
-
 const multerFilter = (req, file, cb) => {
     
   if (file.mimetype.startsWith('image')) {
@@ -18,9 +14,6 @@ const multerFilter = (req, file, cb) => {
 };
 
 const multerStorage = multer.memoryStorage();
-
-
-
 const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilter
@@ -34,8 +27,6 @@ exports.uploadItemsPhotos = upload.fields([
 
 // upload.single('fieldName)
 //upload.array('fieldname,maxCount)
-
-
 //resize midlleWare
 exports.resizeItemsImages = catchAsync(async (req, res, next) => {
 if(!req.files.backGroundImage||!req.files.images) return next();
@@ -171,5 +162,16 @@ exports.search=catchAsync(async(req,res,next)=>{
   res.status(200).json({
     status:true,
     data
+  })
+})
+
+exports.deleteItem=catchAsync(async(req,res,next)=>{
+  const item = await Item.findByIdAndDelete(req.params.id)
+  if(!item){
+    return next(new AppError(`Item not found`,404))
+  }
+  res.status(200).json({
+    status:true,
+    message:"Item Deleted Sucessfully"
   })
 })

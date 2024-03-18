@@ -74,6 +74,7 @@ exports.updateUser=catchAsync(async(req,res,next)=>{
         id=req.user.id
       }
       
+      
   const updatedUser = await User.findByIdAndUpdate(id, filteredBody, {
     new: true,
     runValidators: true
@@ -88,8 +89,14 @@ exports.updateUser=catchAsync(async(req,res,next)=>{
 
 
 
+
 exports.getUsers=catchAsync(async(req,res,next)=>{
-  const data = await User.find();
+  let data
+  if(req.params.id){
+     data = await User.findById(req.params.id);
+  }else{data = await User.find();}
+
+   
   if(!data){
     return next(new AppError("Users not found",404))
   }

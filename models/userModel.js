@@ -48,6 +48,7 @@ const userSchema = new mongoose.Schema({
         type:Boolean,
         default:true
       },
+      passwordChangedAt: Date,
       passwordOtp: String,
       passwordOtpExpires: Date,
 }, {
@@ -57,7 +58,7 @@ const userSchema = new mongoose.Schema({
   })
 
   // DOCUMENT MIDDLEWARE
-userSchema.pre('save', async function (next) {
+  userSchema.pre('save', async function (next) {
     //only run if password modified
     if (!this.isModified('password')) {
       return next();
@@ -68,8 +69,17 @@ userSchema.pre('save', async function (next) {
   
     next();
   });
+  userSchema.pre('save', function(next) {
+    if (!this.isModified('password') || this.isNew) return next();
+  
+    this.passwordChangedAt = Date.now() - 1000;
+    next();
+  });
+  
+
+
   userSchema.pre(/^find/, function (next) {
-    this.find({ active: { $ne: false } }).select('-createdAt -rating');
+    this.find({ isActive: { $ne: false } }).select('-createdAt -rating');
     next();
   });
   

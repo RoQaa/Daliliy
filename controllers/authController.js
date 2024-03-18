@@ -186,7 +186,39 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
 });
 
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  //settings  hy48lha b3d el protect
+  // 1) Get user from collection
 
+  const user = await User.findById(req.user.id).select('+password');
+
+  if (!user) {
+    return next(new AppError("Account not found", 404));
+  }
+  // 2) Check if posted current password is correct
+  if (!(await user.correctPassword(req.body.currentPassword, user.password))) {
+
+    return next(new AppError("Current password isn't correct", 400));
+  }
+    if(!req.body.newPassword||!req.body.newPasswordConfirm){
+      return next(new AppError("Please Enter new Password and password Confirm", 401));
+    }
+    if(req.body.newPassword!==req.body.newPasswordConfirm){
+      return next(new AppError("Password and Password confirm aren't the same", 401));
+    }
+    if ((await user.correctPassword(req.body.newPassword, user.password))){
+      return next(new AppError("it's the same Password", 401));
+    }
+  // 3) If so, update password
+  user.password = req.body.newPassword;
+  user.passwordConfirm = req.body.newPasswordConfirm;
+
+  await user.save({ validateBeforeSave: false });
+  // 4) Log user in, send JWT
+ 
+   // createSendToken(user,200,'password has changed successfully, please log in again',res);
+  }
+);
 
 exports.logOut = catchAsync(async (req, res, next) => {
   res.cookie('jwt','loggedout',{

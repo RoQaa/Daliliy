@@ -1,13 +1,9 @@
 const multer=require('multer')
 const sharp=require('sharp')
 const Category=require('../models/categoryModel')
+const Item =require('../models/itemModel')
 const { catchAsync } = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-
-
-
-
-
 
 const multerFilter = (req, file, cb) => {
     
@@ -82,5 +78,21 @@ if(!data){
     status:true,
     message:"Category Updated Successfully",
     data
+  })
+})
+
+
+exports.deleteCategory=catchAsync(async(req,res,next)=>{
+  const catId=req.params.id;
+  await Item.deleteMany({category:catId})
+  
+ const cat= await Category.findByIdAndDelete(catId)
+  if(!cat){
+    return next(new AppError(`Category not found`,404))
+
+  }
+  res.status(200).json({
+    status:true,
+    message:"Category and her Items deleted Successfully"
   })
 })
