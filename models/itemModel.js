@@ -11,7 +11,7 @@ const itemSchema=new mongoose.Schema({
     },
     backGroundImage:{
         type:String,
-       required:[true,'Please Enter  an Image'],
+      // required:[true,'Please Enter  an Image'],
        
     },
     category:{
@@ -19,15 +19,44 @@ const itemSchema=new mongoose.Schema({
         ref: 'Category',
         required: [true, 'Choose Your Category'],
     },
+    location:{
+        //TODO: fill location
+        type:String,
+    },
+    ratingsAverage: {
+        type: Number,
+        default: 4.5,
+        min: [1, 'Rating must be above 1.0'],
+        max: [5, 'Rating must be below 5.0'],
+        set: val => Math.round(val * 10) / 10 // 4.666666, 46.6666, 47, 4.7
+      },
+      ratingsQuantity: {
+        type: Number,
+        default: 0
+      },
     images:[String],
     About:String,
-   
 },
+
+
+
+
 {
     //timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   })
+
+  itemSchema.index({category:'text'})
+  itemSchema.index({ name: 'text', description: 'text' });
+
+ // Virtual populate
+ itemSchema.virtual('reviews', {
+    ref: 'Review',
+    foreignField: 'item',
+    localField: '_id'
+  });
+  
 
   itemSchema.pre(/^find/, function (next) {
     this.find().select('-category')
@@ -42,7 +71,6 @@ const itemSchema=new mongoose.Schema({
 
   })
 
-  itemSchema.index({ name: 'text', description: 'text' });
   const Item=mongoose.model('Item',itemSchema)
 
   module.exports=Item;

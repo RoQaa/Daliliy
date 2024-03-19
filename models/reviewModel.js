@@ -1,43 +1,96 @@
-const mongoose =require('mongoose')
+const mongoose = require('mongoose')
+const Item = require('./itemModel')
 const reviewSchema = mongoose.Schema({
-    description:{
-        type:String,
-        required:[true,'Enter your review']
+  comment: {
+    type: String,
+    required: [true, 'Enter your review']
+  },
+  user: {
+    type: mongoose.Schema.ObjectId, //population data
+    ref: 'User',
+    required: [true, 'need token'],
+    
+  },
+  item: {
+    type: mongoose.Schema.ObjectId, //population data
+    ref: 'Item',
+    required: [true, "Item n't found"],
+  },
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+}, /*{
+  //timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+}*/)
+
+reviewSchema.index({ item: 1, user: 1 }, { unique: true });
+
+reviewSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'user',
+    select: 'name profileImage',
+
+
+  }).select(' -__v');
+
+  next();
+
+})
+
+
+reviewSchema.statics.calcAverageRatings = async function (itemId) {
+  const stats = await this.aggregate([
+    {
+      $match: { item: itemId }
     },
-    user:{
-        type: mongoose.Schema.ObjectId, //population data
-        ref: 'User',
-        required: [true, 'need token'],
+    {
+      $group: {
+        _id: '$item',
+        nRating: { $sum: 1 },
+        avgRating: { $avg: '$rating' }
+      }
     },
-    item:{
-        type: mongoose.Schema.ObjectId, //population data
-        ref: 'Item',
-        required: [true, "Item n't found"],
-    }
    
-}, {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  })
+  ]);
+  // console.log(stats);
 
+  if (stats.length > 0) {
+    await Item.findByIdAndUpdate(itemId, {
+      ratingsQuantity: stats[0].nRating,
+      ratingsAverage: stats[0].avgRating
+    });
+  } else {
+    await Item.findByIdAndUpdate(itemId, {
+      ratingsQuantity: 0,
+      ratingsAverage: 4.5
+    });
+  }
+};
 
+reviewSchema.post('save', function () {
+  // this points to current review
+  this.constructor.calcAverageRatings(this.item);
+});
 
-  reviewSchema.pre(/^find/, function (next) {
-    this.find().populate({
-        path: 'user',
-        select: 'name ',
-        
-       
-      }).populate({
-        path: 'item',
-        select: 'name',
-      })
+// findByIdAndUpdate
+// findByIdAndDelete
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+  this.r = await this.findOne();
+  // console.log(this.r);
+  next();
+});
 
-    next();
-
-  })
-
-  const Review=mongoose.model('Review',reviewSchema)
-  module.exports=Review;
-  
+reviewSchema.post(/^findOneAnd/, async function () {
+  // await this.findOne(); does NOT work here, query has already executed
+  await this.r.constructor.calcAverageRatings(this.r.item);
+});
+const Review = mongoose.model('Review', reviewSchema)
+module.exports = Review;

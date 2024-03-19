@@ -51,11 +51,11 @@ const userSchema = new mongoose.Schema({
       passwordChangedAt: Date,
       passwordOtp: String,
       passwordOtpExpires: Date,
-}, {
+}, /*{
     //timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  })
+  }*/)
 
   // DOCUMENT MIDDLEWARE
   userSchema.pre('save', async function (next) {

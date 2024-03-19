@@ -6,7 +6,7 @@ const AppError = require('../utils/appError');
 
 
 exports.getReviews=(catchAsync(async (req, res, next) => {
-    const data = await Review.find();
+    const data = await Review.find({item:req.body.itemId})
 
     if (!data) {
         return new next(new AppError(`data n't found`, 404))
@@ -15,6 +15,7 @@ exports.getReviews=(catchAsync(async (req, res, next) => {
     res.status(200).json({
         status: true,
         message: "data returned",
+        length:data.length,
         data
     })
 
@@ -23,7 +24,7 @@ exports.getReviews=(catchAsync(async (req, res, next) => {
 }))
 
 exports.addReviews=(catchAsync(async(req,res,next)=>{
-    const user = req.user._id;
+    const user = req.user.id;
     if(!req.body){
         return next(new AppError(`data n't found`,404))
     }

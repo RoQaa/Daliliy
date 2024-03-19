@@ -138,7 +138,7 @@ exports.getItems = catchAsync(async (req, res, next) => {
 
 
 exports.getSpecificItem=catchAsync(async(req,res,next)=>{
-const item=await Item.findById(req.body.itemId);
+const item=await Item.findById(req.body.itemId).populate('reviews');
 if(!item){
     return next(new AppError(`item not found`,404))
 }
