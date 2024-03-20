@@ -2,8 +2,6 @@ const Review = require('../models/reviewModel')
 const { catchAsync } = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
-
-
 exports.getReviews = (catchAsync(async (req, res, next) => {
     const data = await Review.find({ item: req.body.itemId })
 
@@ -36,28 +34,29 @@ exports.addReviews = (catchAsync(async (req, res, next) => {
     })
 }))
 
-exports.deleteReview=(catchAsync(async(req,res,next)=>{
-    const doc=await Review.findByIdAndDelete(req.body.reviewId)
-    
+exports.deleteReview = (catchAsync(async (req, res, next) => {
+    const doc = await Review.findByIdAndDelete(req.body.reviewId)
+
+
     if (!doc) {
         return next(new AppError('No document found with that ID', 404));
-      }
-  
-      res.status(204).json({
+    }
+
+    res.status(204).json({
         status: true,
-      });
+    });
 }))
 
 
-exports.updateReview=(catchAsync(async(req,res,next)=>{
-    const doc=await Review.findByIdAndUpdate(req.body.reviewId,req.body,{new:true,runValidators:true})
-    
+exports.updateReview = (catchAsync(async (req, res, next) => {
+    const doc = await Review.findByIdAndUpdate(req.body.reviewId, req.body, { new: true, runValidators: true })
+
     if (!doc) {
         return next(new AppError('No document found with that ID', 404));
-      }
-  
-      res.status(202).json({
+    }
+
+    res.status(202).json({
         status: true,
-        
-      });
+
+    });
 }))
