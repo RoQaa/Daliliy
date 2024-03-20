@@ -11,7 +11,7 @@ const itemSchema=new mongoose.Schema({
     },
     backGroundImage:{
         type:String,
-      // required:[true,'Please Enter  an Image'],
+       required:[true,'Please Enter  an Image'],
        
     },
     category:{

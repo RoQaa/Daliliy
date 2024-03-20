@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Item = require('./itemModel')
 const reviewSchema = mongoose.Schema({
-  comment: {
+  review: {
     type: String,
     required: [true, 'Enter your review']
   },
@@ -25,11 +25,11 @@ const reviewSchema = mongoose.Schema({
     type: Date,
     default: Date.now
   },
-}, /*{
-  //timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true },
-}*/)
+}, {
+  timestamps: true,
+ // toJSON: { virtuals: true },
+ // toObject: { virtuals: true },
+})
 
 reviewSchema.index({ item: 1, user: 1 }, { unique: true });
 
@@ -83,13 +83,14 @@ reviewSchema.post('save', function () {
 // findByIdAndUpdate
 // findByIdAndDelete
 reviewSchema.pre(/^findOneAnd/, async function (next) {
-  this.r = await this.findOne();
-  // console.log(this.r);
+  this.r = await this.findOne().clone();//  clone() => work here,  to prevernt err:query has already executed
+   
   next();
 });
 
 reviewSchema.post(/^findOneAnd/, async function () {
-  // await this.findOne(); does NOT work here, query has already executed
+   //await this.findOne();// does NOT work here, query has already executed
+  
   await this.r.constructor.calcAverageRatings(this.r.item);
 });
 const Review = mongoose.model('Review', reviewSchema)

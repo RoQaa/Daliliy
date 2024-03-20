@@ -22,10 +22,10 @@ app.use(helmet()); // set el htttp headers property
 
 //development logging
 if (process.env.NODE_ENV === 'development') {
-  // app.use(morgan('dev'));
-  morganBody(app, {
-    logAllReqHeader: true,
-  });
+   app.use(morgan('dev'));
+ // morganBody(app, {
+    //logAllReqHeader: true,
+ // });
 }
 
 //Limit requests from same API

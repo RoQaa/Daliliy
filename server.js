@@ -15,12 +15,14 @@ const server = http.createServer(app);
 
 
 const DB = process.env.DATABASE.replace('<password>', process.env.PASSWORD);
-
+mongoose.set("strictQuery", true);
 mongoose
   .connect(DB)
   .then((con) => {
     console.log('DB connection Successfully');
   });
+
+
 
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
