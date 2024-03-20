@@ -1,6 +1,7 @@
 const multer =require('multer')
 const sharp=require('sharp')
 const Item = require('../models/itemModel')
+const Review=require('../models/reviewModel')
 const Category = require('../models/categoryModel')
 const { catchAsync } = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
@@ -166,12 +167,13 @@ exports.search=catchAsync(async(req,res,next)=>{
 })
 
 exports.deleteItem=catchAsync(async(req,res,next)=>{
+  await Review.deleteMany({item:req.params.id})
   const item = await Item.findByIdAndDelete(req.params.id)
   if(!item){
     return next(new AppError(`Item not found`,404))
   }
-  res.status(200).json({
+  res.status(202).json({
     status:true,
-    message:"Item Deleted Sucessfully"
+    data:null
   })
 })
