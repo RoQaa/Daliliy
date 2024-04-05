@@ -13,7 +13,6 @@ router.use(authController.protect)
 router.patch('/resetPassword',authController.resetPassword)
 router.patch('/updatePassword',authController.updatePassword)
 router.get('/logout',authController.logOut)
-router.post('/verifyOtp',authController.verifyEmailOtp)
 
 //user Routes
 router.patch('/updateUser',userController.uploadUserPhoto,userController.resizeUserPhoto,userController.updateUser)
@@ -24,6 +23,7 @@ router.patch('/updateUser',userController.uploadUserPhoto,userController.resizeU
 // Restrict all routes after this middleware
 router.use(authController.restrictTo('admin'));
 //Admin Routes
+
 router.get('/getUsers',userController.getUsers)
 router.get('/getUsers/:id',userController.getUsers)
 router.delete('/deleteUser/:id',userController.deleteUser)

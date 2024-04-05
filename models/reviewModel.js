@@ -12,7 +12,7 @@ const reviewSchema = mongoose.Schema({
     
   },
   item: {
-    type: mongoose.Schema.ObjectId, //population data
+    type: mongoose.Schema.ObjectId, //population data //String
     ref: 'Item',
     required: [true, "Item n't found"],
   },
@@ -26,7 +26,7 @@ const reviewSchema = mongoose.Schema({
     default: Date.now
   },
 }, {
-  timestamps: true,
+ // timestamps: true,
  // toJSON: { virtuals: true },
  // toObject: { virtuals: true },
 })

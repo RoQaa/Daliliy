@@ -38,6 +38,7 @@ const sendEmail=async (options) => {
         subject:options.subject,
         
         //html:
+        //TODO: change Template
         template:'index',
         context:{
             name:options.name,

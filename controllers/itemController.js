@@ -86,7 +86,7 @@ exports.addItem = catchAsync(async (req, res, next) => {
 
 exports.getItems = catchAsync(async (req, res, next) => {
 
-    const data = await Item.aggregate([
+    let data = await Item.aggregate([
         {
           $lookup: {
             from: Category.collection.name,
@@ -110,6 +110,7 @@ exports.getItems = catchAsync(async (req, res, next) => {
         {
           $match: {
             'category.title': req.body.title,
+              
           },
         },
         {
@@ -121,8 +122,10 @@ exports.getItems = catchAsync(async (req, res, next) => {
           },
         },
       ]);
-      
-     
+      //Location
+     if(req.body.location){
+     await data.find({location:req.body.location})
+     }
       
      if(!data||data.length===0){
          return next(new AppError(`data n't found`,404));
@@ -152,13 +155,19 @@ res.status(200).json({
 
 exports.search=catchAsync(async(req,res,next)=>{
   
-  const data = await Item.find({
+ /* const data = await Item.find({
     $text:{
       $search:req.body.word
       
     }
   })
-  
+  */
+ const data = await Item.find({
+  name:{
+    $regex:req.body.word,
+    $options:"i"
+  }
+ })
 
   res.status(200).json({
     status:true,

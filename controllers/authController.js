@@ -52,7 +52,7 @@ const createSendToken = (user, statusCode, message, res) => {
 
 
 exports.SignUp = catchAsync(async (req, res, next) => {
-
+  req.body.role=undefined;
   const newUser = await User.create(req.body);
 
   if (!newUser) {
