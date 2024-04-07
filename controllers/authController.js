@@ -3,10 +3,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const validator = require('validator');
-const User = require('../models/userModel')
-const sendEmail=require('../utils/email')
-const { catchAsync } = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+const User = require(`${__dirname}/../models/userModel`)
+const sendEmail=require(`${__dirname}/../utils/email`)
+const { catchAsync } = require(`${__dirname}/../utils/catchAsync`);
+const AppError = require(`${__dirname}/../utils/appError`);
 
 const signToken = (id) => {
   const token = jwt.sign({ id: id }, process.env.JWT_SECRET, {

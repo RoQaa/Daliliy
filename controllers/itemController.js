@@ -1,10 +1,10 @@
 const multer =require('multer')
 const sharp=require('sharp')
-const Item = require('../models/itemModel')
-const Review=require('../models/reviewModel')
-const Category = require('../models/categoryModel')
-const { catchAsync } = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+const Item = require(`${__dirname}/../models/itemModel`)
+const Review=require(`${__dirname}/../models/reviewModel`)
+const Category = require(`${__dirname}/../models/categoryModel`)
+const { catchAsync } = require(`${__dirname}/../utils/catchAsync`);
+const AppError = require(`${__dirname}/../utils/appError`);
 const multerFilter = (req, file, cb) => {
     
   if (file.mimetype.startsWith('image')) {

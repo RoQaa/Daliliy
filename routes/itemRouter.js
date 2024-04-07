@@ -1,8 +1,8 @@
 const express=require('express');
 const router = express.Router();
-const authController=require('../controllers/authController')
-const itemController=require('../controllers/itemController')
-const reviewRouter = require('./reviewRouter');
+const authController=require(`${__dirname}/../controllers/authController`)
+const itemController=require(`${__dirname}/../controllers/itemController`)
+const reviewRouter = require(`${__dirname}/reviewRouter`);
 
 
 

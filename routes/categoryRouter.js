@@ -1,7 +1,7 @@
 const express=require('express');
 const router = express.Router();
-const authController=require('../controllers/authController')
-const categoryController=require('../controllers/categoryController')
+const authController=require(`${__dirname}/../controllers/authController`)
+const categoryController=require(`${__dirname}/../controllers/categoryController`)
 
 
 

@@ -1,7 +1,7 @@
 const express=require('express');
 const router = express.Router();
-const authController=require('../controllers/authController')
-const reviewController=require('../controllers/reviewController')
+const authController=require(`${__dirname}/../controllers/authController`)
+const reviewController=require(`${__dirname}/../controllers/reviewController`)
 
 router.use(authController.protect)
 

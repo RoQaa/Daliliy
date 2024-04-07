@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const Item = require('./itemModel')
+const Item = require(`${__dirname}/itemModel`)
 const reviewSchema = mongoose.Schema({
   review: {
     type: String,

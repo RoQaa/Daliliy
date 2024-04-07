@@ -1,9 +1,9 @@
 const multer=require('multer')
 const sharp=require('sharp')
-const Category=require('../models/categoryModel')
-const Item =require('../models/itemModel')
-const { catchAsync } = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+const Category=require(`${__dirname}/../models/categoryModel`)
+const Item =require(`${__dirname}/../models/itemModel`)
+const { catchAsync } = require(`${__dirname}/../utils/catchAsync`);
+const AppError = require(`${__dirname}/../utils/appError`);
 
 const multerFilter = (req, file, cb) => {
     

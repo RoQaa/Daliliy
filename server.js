@@ -7,14 +7,14 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
-dotenv.config({ path: './config.env' });
+dotenv.config({ path: `${__dirname}/config.env` });
 
 const http = require('http');
-const app = require('./app');
+const app = require(`${__dirname}/app`);
 const server = http.createServer(app);
 
 
-const DB = process.env.DATABASE.replace('<password>', process.env.PASSWORD);
+const DB = process.env.DATABASE
 mongoose.set("strictQuery", true);
 mongoose
   .connect(DB)

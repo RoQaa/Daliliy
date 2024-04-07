@@ -7,12 +7,12 @@ const helmet = require('helmet'); // security
 const mongoSanitize = require('express-mongo-sanitize'); // security
 const xss = require('xss-clean'); // security
 
-const AppError = require('./utils/appError');
-const userRouter=require('./routes/userRouter')
-const categoryRouter=require('./routes/categoryRouter')
-const itemsRouter=require('./routes/itemRouter')
-const reviewRouter=require('./routes/reviewRouter')
-const globalErrorHandler = require('./controllers/errorController');
+const AppError = require(`${__dirname}/utils/appError`);
+const userRouter=require(`${__dirname}/routes/userRouter`)
+const categoryRouter=require(`${__dirname}/routes/categoryRouter`)
+const itemsRouter=require(`${__dirname}/routes/itemRouter`)
+const reviewRouter=require(`${__dirname}/routes/reviewRouter`)
+const globalErrorHandler = require(`${__dirname}/controllers/errorController`);
 const app = express();
 
 // Global MiddleWares
@@ -70,12 +70,7 @@ app.get('/',(req,res)=>{
     message:"Welcome"
   })
 })
-app.get('/test',(req,res)=>{
-  res.send("Welcomeeeeeeeeeeeeeeee from test")
-})
-app.get('/api',(req,res)=>{
-  res.send("Welcomeeeeeeeeeeeeeeee from api")
-})
+
 app.use('/api/auth',userRouter)
 app.use('/api/cats',categoryRouter)
 app.use('/api/items',itemsRouter)

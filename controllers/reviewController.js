@@ -1,6 +1,6 @@
-const Review = require('../models/reviewModel')
-const { catchAsync } = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+const Review = require(`${__dirname}/../models/reviewModel`)
+const { catchAsync } = require(`${__dirname}/../utils/catchAsync`);
+const AppError = require(`${__dirname}/../utils/appError`);
 
 exports.getReviews = (catchAsync(async (req, res, next) => {
     const data = await Review.find({ item: req.body.itemId })

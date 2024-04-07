@@ -1,8 +1,8 @@
 const multer=require('multer')
 const sharp=require('sharp')
-const { catchAsync } = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
-const User=require('../models/userModel');
+const { catchAsync } = require(`${__dirname}/../utils/catchAsync`);
+const AppError = require(`${__dirname}/../utils/appError`);
+const User=require(`${__dirname}/../models/userModel`);
 const { __awaiter } = require('tslib');
 
 const filterObj = (obj, ...allowedFields) => {
