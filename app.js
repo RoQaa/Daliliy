@@ -64,7 +64,7 @@ app.use((req, res, next) => {
 
 
 //Routes
-app.get('/',(req,res)=>{
+app.get('/api',(req,res)=>{
   res.status(200).json({
     status:true,
     message:"Welcome"
