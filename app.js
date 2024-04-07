@@ -65,7 +65,10 @@ app.use((req, res, next) => {
 
 //Routes
 app.get('/',(req,res)=>{
-res.send("work")
+res.status(200).json({
+  status:true,
+  message:"Dalil ALhafr Welcome"
+})
 })
 
 app.use('/api/auth',userRouter)
