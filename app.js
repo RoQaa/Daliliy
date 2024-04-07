@@ -70,6 +70,12 @@ app.get('/',(req,res)=>{
     message:"Welcome"
   })
 })
+app.get('/test',(req,res)=>{
+  res.send("Welcomeeeeeeeeeeeeeeee from test")
+})
+app.get('/api',(req,res)=>{
+  res.send("Welcomeeeeeeeeeeeeeeee from api")
+})
 app.use('/api/auth',userRouter)
 app.use('/api/cats',categoryRouter)
 app.use('/api/items',itemsRouter)
