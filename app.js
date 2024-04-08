@@ -6,7 +6,7 @@ const rateLimit = require('express-rate-limit'); // security
 const helmet = require('helmet'); // security
 const mongoSanitize = require('express-mongo-sanitize'); // security
 const xss = require('xss-clean'); // security
-
+const cors =require('cors')
 const AppError = require(`${__dirname}/utils/appError`);
 const userRouter=require(`${__dirname}/routes/userRouter`)
 const categoryRouter=require(`${__dirname}/routes/categoryRouter`)
@@ -19,7 +19,8 @@ const app = express();
 
 //set security http headers
 app.use(helmet()); // set el htttp headers property
-
+app.use(cors());
+app.options('*',cors())
 //development logging
 if (process.env.NODE_ENV === 'development') {
   // app.use(morgan('dev'));
