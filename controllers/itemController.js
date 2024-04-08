@@ -32,13 +32,14 @@ exports.uploadItemsPhotos = upload.fields([
 //resize midlleWare
 exports.resizeItemsImages = catchAsync(async (req, res, next) => {
 if(!req.files.backGroundImage||!req.files.images) return next();
-req.body.backGroundImage = `https://dalilalhafr.com/api/public/img/items/item-${req.params.id}-${Date.now()}-cover.jpeg`;
+const path=`item-${req.params.id}-${Date.now()}-cover.jpeg`
+req.body.backGroundImage = `localhost:5000/api/public/img/items/item-${req.params.id}-${Date.now()}-cover.jpeg`;
 //1) Background Image
 await sharp(req.files.backGroundImage[0].buffer)
 .resize(2000, 1333)
 .toFormat('jpeg')
 .jpeg({ quality: 90 })
-.toFile(`public/img/items/${req.body.backGroundImage}`);
+.toFile(`public/img/items/${path}`);
 
 // 2)Images
 req.body.images = [];
@@ -53,7 +54,8 @@ await Promise.all(
       .jpeg({ quality: 90 })
       .toFile(`public/img/items/${filename}`);
 
-    req.body.images.push(`https://dalilalhafr.com/api/public/img/items/${filename}`);
+    //req.body.images.push(`https://dalilalhafr.com/api/public/img/items/${filename}`);
+    req.body.images.push(`localhost:5000/api/public/img/items/${filename}`);
   })
 );
 next();
