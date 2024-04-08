@@ -65,7 +65,7 @@ exports.updateUser=catchAsync(async(req,res,next)=>{
     let id;
     //Filtered out unwanted fields names that are not allowed to be updated
     const filteredBody = filterObj(req.body, 'name');
-    if (req.file) filteredBody.profileImage = req.file.filename;
+    if (req.file) filteredBody.profileImage = `https://dalilalhafr.com/api/public/img/users/${req.file.filename}`;
 
       
       // 3) Update user document

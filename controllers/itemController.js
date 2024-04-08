@@ -32,7 +32,7 @@ exports.uploadItemsPhotos = upload.fields([
 //resize midlleWare
 exports.resizeItemsImages = catchAsync(async (req, res, next) => {
 if(!req.files.backGroundImage||!req.files.images) return next();
-req.body.backGroundImage = `item-${req.params.id}-${Date.now()}-cover.jpeg`;
+req.body.backGroundImage = `https://dalilalhafr.com/api/public/img/items/item-${req.params.id}-${Date.now()}-cover.jpeg`;
 //1) Background Image
 await sharp(req.files.backGroundImage[0].buffer)
 .resize(2000, 1333)
@@ -53,7 +53,7 @@ await Promise.all(
       .jpeg({ quality: 90 })
       .toFile(`public/img/items/${filename}`);
 
-    req.body.images.push(filename);
+    req.body.images.push(`https://dalilalhafr.com/api/public/img/items/${filename}`);
   })
 );
 next();
