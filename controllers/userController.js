@@ -142,3 +142,15 @@ exports.search=catchAsync(async(req,res,next)=>{
     results
   })
 })
+
+exports.creataAccount=catchAsync(async(req,res,next)=>{
+  const newUser = await User.create(req.body);
+
+  if (!newUser) {
+    return next(new AppError(`SomeThing Error cannot sign up`, 404));
+  }
+  res.status(201).json({
+    status:true,
+    message:"Account Create Successfully"
+  })
+})

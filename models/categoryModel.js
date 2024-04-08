@@ -14,6 +14,18 @@ const categorySchema=mongoose.Schema({
     }
 })
 
+categorySchema.pre(/^find/, function (next) {
+    this.find().select('-__v')
+    
+    /*.populate({
+        path: 'category',
+        select: 'title ',
+       
+      })
+*/
+    next();
+
+  })
 
 const Category=mongoose.model('Category',categorySchema);
 

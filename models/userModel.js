@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     name:{
         type:String,
         required:[true,'Please Enter your User Name'] ,
-        unique:[true,"there's a user with that name "],
+       // unique:[true,"there's a user with that name "],
         //trim:true
     },
     email:{
@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     },
     role:{
         type:String,
-        enum:['user','admin'],
+        enum:['user','admin','manger'],
         default:'user'
     },
     password: {

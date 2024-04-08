@@ -51,7 +51,10 @@ app.use(xss());
 
 
 //serving static files
-app.use(express.static(`${__dirname}/public`));
+//app.use(express.static(`${__dirname}/public`));
+//app.use('/static', express.static('public'));
+//app.set('view engine', 'ejs'); // Change 'ejs' to your desired template engine
+app.use('/api/public',express.static(path.join(__dirname, 'public')));
 
 //app.use(express.json({limit:'10kb'})); => limit of data in body not more than 10 KB
 // asdsfasdfsa

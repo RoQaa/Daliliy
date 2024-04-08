@@ -28,7 +28,7 @@ const multerFilter = (req, file, cb) => {
   //resize midlleWare
   exports.resizeCatPhoto = catchAsync(async (req, res, next) => {
     if (!req.file) return next();
-  
+
     req.file.filename = `cat-${req.params.id}-${Date.now()}.jpeg`;
   
     await sharp(req.file.buffer)
@@ -37,6 +37,9 @@ const multerFilter = (req, file, cb) => {
       .jpeg({ quality: 90 })
       .toFile(`public/img/cats/${req.file.filename}`);
   
+      const locationServer=`https://dalilalhafr.com/api/public/img/cats`;
+      //const location=`http://localhost:5000/api/public/img/cats`
+        req.file.filename = `${locationServer}/cat-${req.params.id}-${Date.now()}.jpeg`;
     next();
   });
   
