@@ -37,9 +37,9 @@ const multerFilter = (req, file, cb) => {
       .jpeg({ quality: 90 })
       .toFile(`public/img/cats/${req.file.filename}`);
   
-      const locationServer=`https://dalilalhafr.com/api/public/img/cats`;
+     
       //const location=`http://localhost:5000/api/public/img/cats`
-        req.file.filename = `${locationServer}/cat-${req.params.id}-${Date.now()}.jpeg`;
+       
     next();
   });
   
@@ -72,7 +72,8 @@ exports.addCategory=catchAsync(async(req,res,next)=>{
 
 
 exports.updateCategory=catchAsync(async(req,res,next)=>{
-if(req.file) req.body.image=req.file.filename
+  const locationServer=`https://dalilalhafr.com/api/public/img/cats`;
+if(req.file) req.body.image=`https://dalilalhafr.com/api/public/img/cats/${req.file.filename}`
 const data = await Category.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
 if(!data){
     return next(new AppError(`Category not found`,404))
