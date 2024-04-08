@@ -5,6 +5,7 @@ const Review=require(`${__dirname}/../models/reviewModel`)
 const Category = require(`${__dirname}/../models/categoryModel`)
 const { catchAsync } = require(`${__dirname}/../utils/catchAsync`);
 const AppError = require(`${__dirname}/../utils/appError`);
+const APIFeatures = require(`${__dirname}/../utils/apiFeatures`);
 const multerFilter = (req, file, cb) => {
     
   if (file.mimetype.startsWith('image')) {
@@ -57,6 +58,9 @@ await Promise.all(
 );
 next();
 });
+
+
+
 
 exports.updateItem=catchAsync(async(req,res,next)=>{
 const data = await Item.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
@@ -185,4 +189,32 @@ exports.deleteItem=catchAsync(async(req,res,next)=>{
     status:true,
     data:null
   })
+})
+
+
+
+
+exports.aliasTopItems = (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = '-ratingsAverage';
+  req.query.fields = 'name,description,backGroundImage';
+  next();
+};
+
+exports.getAllItems=catchAsync(async(req,res,next)=>{
+      // EXECUTE QUERY
+      const features = new APIFeatures(Item.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    const items = await features.query;
+    if(!items){
+      return next(new AppError(`Data n't found`,404))
+    }
+    res.status(200).json({
+      status:true,
+      length:items.length,
+      data:items
+    })
 })

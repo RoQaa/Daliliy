@@ -29,6 +29,7 @@ router.get('/getUsers/:id',userController.getUsers)
 router.delete('/deleteUser/:id',userController.deleteUser)
 router.patch('/updateUser/:id',userController.uploadUserPhoto,userController.resizeUserPhoto,userController.updateUser)
 router.patch('/activity/:id',userController.Active)
+router.get('/search',userController.search)
 
 
 

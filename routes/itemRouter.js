@@ -9,7 +9,7 @@ const reviewRouter = require(`${__dirname}/reviewRouter`);
 router.use('/:itemId/reviews', reviewRouter);
 // Protect all routes after this middleware
 router.use(authController.protect)
-
+router.get('/top-5',itemController.aliasTopItems, itemController.getAllItems);
 router.get('/getItems',itemController.getItems)
 router.get('/getSpecificItem',itemController.getSpecificItem)
 router.get('/search',itemController.search)

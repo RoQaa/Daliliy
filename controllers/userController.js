@@ -123,3 +123,22 @@ exports.Active=catchAsync(async(req,res,next)=>{
     message:"you updated this User"
   })
 })
+
+exports.search=catchAsync(async(req,res,next)=>{
+  const searchTerm = req.query.term;
+  const results = await User.find({ $text: { $search: searchTerm } }).limit(10);
+ /* const data = await User.find({
+    $text:{
+      $search:req.body.word
+      
+    }
+  })
+  */
+  if(!results){
+    return next(new AppError(`Data n't found`,404))
+  }
+  res.status(200).json({
+    status:true,
+    results
+  })
+})

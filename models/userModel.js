@@ -56,7 +56,7 @@ const userSchema = new mongoose.Schema({
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }*/)
-
+  userSchema.index({ name: 'text', email: 'text' });
   // DOCUMENT MIDDLEWARE
   userSchema.pre('save', async function (next) {
     //only run if password modified
