@@ -91,12 +91,9 @@ exports.addItem = catchAsync(async (req, res, next) => {
 
 
 exports.getItems = catchAsync(async (req, res, next) => {
-  let data;
-    if(req.body.title==="All"){
-      data= await Item.find().populate('category');
-    }
-    else{
-      data = await Item.aggregate([
+ 
+ 
+    const   data = await Item.aggregate([
         {
           $lookup: {
             from: Category.collection.name,
@@ -132,14 +129,9 @@ exports.getItems = catchAsync(async (req, res, next) => {
           },
         },
       ]);
-    }
+    
 
-  
-      //Location
-   /*  if(req.body.location){
-     await data.find({location:req.body.location})
-     }
-      */
+
      if(!data||data.length===0){
          return next(new AppError(`data n't found`,404));
      }
