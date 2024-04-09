@@ -16,7 +16,7 @@ router.get('/logout',authController.logOut)
 
 //user Routes
 router.patch('/updateUser',userController.uploadUserPhoto,userController.resizeUserPhoto,userController.updateUser)
-
+router.get('/profilePage',userController.profilePage)
 
 
 

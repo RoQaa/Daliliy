@@ -154,3 +154,14 @@ exports.creataAccount=catchAsync(async(req,res,next)=>{
     message:"Account Create Successfully"
   })
 })
+exports.profilePage=catchAsync(async(req,res,next)=>{
+  ///protect
+  const data =req.user;
+  if(!data){
+    return next(new AppError(`Something is wrong please Try again`,404))
+  }
+  res.status(200).json({
+    status:true,
+    data
+  })
+})
