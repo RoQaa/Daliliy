@@ -54,6 +54,15 @@ const createSendToken = (user, statusCode, message, res) => {
 exports.SignUp = catchAsync(async (req, res, next) => {
   req.body.role=undefined;
   const newUser = await User.create(req.body);
+  if(req.headers.lang==='AR'){
+    if (!newUser) {
+      return next(new AppError(`حدث خطأ ما حاول لاحقا`, 404));
+    }
+  
+  
+  
+    createSendToken(newUser, 201, "تم التسجيل بنجاح", res);
+  }else{
 
   if (!newUser) {
     return next(new AppError(`SomeThing Error cannot sign up`, 404));
@@ -62,7 +71,7 @@ exports.SignUp = catchAsync(async (req, res, next) => {
 
 
   createSendToken(newUser, 201, "sign up successfully", res);
-
+  }
 
 
 });
@@ -94,13 +103,18 @@ exports.login = catchAsync(async (req, res, next) => {
       )) /** 34an hyrun fe el correct 7ta loo ml2hoo4*/
     )
   ) {
+    if(req.headers.lang==='AR'){
+      return next(new AppError('البريد الالكتروني او كلمة المرور غير صحيحة', 401));
+    }
 
-    return next(new AppError('Incorrect email or password', 404));
+    return next(new AppError('Incorrect email or password', 401));
   }
   //3) if everything ok send token back to the client
-
+  if(req.headers.lang==='AR'){
+    createSendToken(user, 200, 'تم تسجيل الدخول بنجاح', res);
+  }else{
   createSendToken(user, 200, 'log in successfully', res);
-
+  }
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
