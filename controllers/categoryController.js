@@ -29,11 +29,11 @@ const multerFilter = (req, file, cb) => {
   exports.resizeCatPhoto = catchAsync(async (req, res, next) => {
     if (!req.file) return next();
 
-    req.file.filename = `cat-${req.params.id}-${Date.now()}.jpeg`;
+    req.file.filename = `cat-${req.params.id}-${Date.now()}.jpg`;
   
     await sharp(req.file.buffer)
       .resize(500, 500)
-      .toFormat('jpeg')
+      .toFormat('jpg')
       .jpeg({ quality: 90 })
       .toFile(`public/img/cats/${req.file.filename}`);
   
