@@ -19,14 +19,9 @@ const app = express();
 
 //set security http headers
 app.use(helmet()); // set el htttp headers property
-/*
+
 app.use(cors());
 app.options('*',cors())
-*/
-app.use(cors({
-  origin: 'http://localhost:3000', // Replace with your React app's origin
-  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
-}));
 
 
 //development logging
