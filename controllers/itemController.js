@@ -93,7 +93,7 @@ exports.addItem = catchAsync(async (req, res, next) => {
 exports.getItems = catchAsync(async (req, res, next) => {
   let data;
     if(req.body.title==="All"){
-      data= await Item.find();
+      data= await Item.find().populate('category');
     }
     else{
       data = await Item.aggregate([
@@ -126,7 +126,7 @@ exports.getItems = catchAsync(async (req, res, next) => {
         {
           $project: {
             __v: 0,
-            
+           // category:0,
             images:0,
             About:0
           },

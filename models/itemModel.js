@@ -59,17 +59,16 @@ const itemSchema=new mongoose.Schema({
   
 
   itemSchema.pre(/^find/, function (next) {
-    this.find().select('-category')
-    
-    /*.populate({
+    this.find().populate({
         path: 'category',
         select: 'title ',
        
       })
-*/
+
     next();
 
   })
+  
 
   const Item=mongoose.model('Item',itemSchema)
 
