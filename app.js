@@ -20,7 +20,7 @@ const app = express();
 //set security http headers
 app.use(helmet()); // set el htttp headers property
 app.use(cors());
-//app.options('*',cors())
+app.options('*',cors())
 //development logging
 if (process.env.NODE_ENV === 'development') {
   // app.use(morgan('dev'));
