@@ -17,6 +17,7 @@ router.get('/search',itemController.search)
 
 // Restrict all routes after this middleware
 router.use(authController.restrictTo('admin','manger'));
+router.get('/getAllitems/:id',itemController.getAllItemsOfCategoreis)
 router.get('/getAllitems',itemController.getAllItems)
 router.post('/addItem',itemController.addItem)
 router.patch('/updateItem/:id',itemController.uploadItemsPhotos,itemController.resizeItemsImages,itemController.updateItem)

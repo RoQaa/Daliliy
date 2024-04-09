@@ -221,3 +221,22 @@ exports.getAllItems=catchAsync(async(req,res,next)=>{
       data:items
     })
 })
+
+
+exports.getAllItemsOfCategoreis=catchAsync(async(req,res,next)=>{
+  // EXECUTE QUERY
+  const features = new APIFeatures(Item.find({category:req.params.id}), req.query)
+  .filter()
+  .sort()
+  .limitFields()
+  .paginate();
+const items = await features.query;
+if(!items){
+  return next(new AppError(`Data n't found`,404))
+}
+res.status(200).json({
+  status:true,
+  length:items.length,
+  data:items
+})
+})
