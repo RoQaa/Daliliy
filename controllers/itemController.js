@@ -126,7 +126,7 @@ exports.getItems = catchAsync(async (req, res, next) => {
         {
           $project: {
             __v: 0,
-            category:0,
+            
             images:0,
             About:0
           },
