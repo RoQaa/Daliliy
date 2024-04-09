@@ -13,7 +13,7 @@ router.get('/getCats',categoryController.getCategories)
 
 
 // Restrict all routes after this middleware
-router.use(authController.restrictTo('admin'));
+router.use(authController.restrictTo('admin','manger'));
 
 router.post('/addCat',categoryController.addCategory)
 router.patch('/updateCategory/:id',categoryController.uploadCatPhoto,categoryController.resizeCatPhoto,categoryController.updateCategory)

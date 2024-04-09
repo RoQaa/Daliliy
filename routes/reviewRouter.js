@@ -8,7 +8,11 @@ router.use(authController.protect)
 router.get('/getReviews',reviewController.getReviews)
 router.post('/addReview',reviewController.addReviews)
 
-router.use(authController.restrictTo('user','admin'))
+router.patch('/updateUserReview',reviewController.updateUserReview)
+router.delete('/deleteUserReview',reviewController.deleteUserReview)
+
+
+router.use(authController.restrictTo('admin','manger'))
 router.patch('/updateReview',reviewController.updateReview)
 router.delete('/deleteReview',reviewController.deleteReview)
 module.exports=router;

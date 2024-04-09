@@ -57,6 +57,44 @@ exports.updateReview = (catchAsync(async (req, res, next) => {
 
     res.status(202).json({
         status: true,
-
+        doc
     });
 }))
+
+exports.updateUserReview=catchAsync(async(req,res,next)=>{
+//const doc = await Review.findOneAndUpdate({_id:req.body.reviewId,user:req.user.id}, req.body, { new: true, runValidators: true })
+const doc = await Review.findOne({
+    _id: req.body.reviewId,
+    user: req.user.id
+  });
+
+if(!doc ){
+    return next(new AppError(`You are n't allowed to do this action`,404))
+}
+
+    // Update the document
+    doc.set(req.body); // Set the new data
+    await doc.save(); // Save the changes
+  
+
+  
+res.status(200).json({
+    status:true,
+    message:"Review Updated",
+    doc
+})
+})
+
+exports.deleteUserReview=catchAsync(async(req,res,next)=>{
+    const doc = await Review.findOne({
+        _id: req.body.reviewId,
+        user: req.user.id
+      });
+      if(!doc ){
+        return next(new AppError(`You are n't allowed to do this action`,404))
+    }
+    await doc.deleteOne(); // or existingReview.remove()
+    res.status(204).json({
+        status: true,
+    });
+})

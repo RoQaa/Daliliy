@@ -20,17 +20,20 @@ router.get('/profilePage',userController.profilePage)
 
 
 
+router.delete('/deleteUser/:id',authController.restrictTo('admin'),userController.deleteUser)
+router.post('/createAccount',authController.restrictTo('admin'),userController.creataAccount)
 // Restrict all routes after this middleware
-router.use(authController.restrictTo('admin'));
+router.use(authController.restrictTo('admin','manger'));
+
 //Admin Routes
 
 router.get('/getUsers',userController.getUsers)
 router.get('/getUsers/:id',userController.getUsers)
-router.delete('/deleteUser/:id',userController.deleteUser)
+
 router.patch('/updateUser/:id',userController.uploadUserPhoto,userController.resizeUserPhoto,userController.updateUser)
 router.patch('/activity/:id',userController.Active)
 router.get('/search',userController.search)
-router.post('/createAccount',userController.creataAccount)
+
 
 
 
