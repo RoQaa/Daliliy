@@ -24,6 +24,13 @@ app.use(cors());
 app.options('*',cors())
 
 
+// Add middleware to set Cross-Origin-Resource-Policy header
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+  next();
+});
+
+
 //development logging
 if (process.env.NODE_ENV === 'development') {
   // app.use(morgan('dev'));
