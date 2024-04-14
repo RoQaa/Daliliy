@@ -62,20 +62,15 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
 });
 
 exports.updateUser=catchAsync(async(req,res,next)=>{
-    let id;
+   
     //Filtered out unwanted fields names that are not allowed to be updated
     const filteredBody = filterObj(req.body, 'name');
     if (req.file) filteredBody.profileImage = `https://dalilalhafr.com/api/public/img/users/${req.file.filename}`;
 
       
-      // 3) Update user document
-      if(req.params.id){ id=req.params.id}
-      else{
-        id=req.user.id
-      }
+   
       
-      
-  const updatedUser = await User.findByIdAndUpdate(id, filteredBody, {
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true
   });
@@ -90,7 +85,25 @@ exports.updateUser=catchAsync(async(req,res,next)=>{
 
 })
 
+exports.updateUserByAdmin=catchAsync(async(req,res,next)=>{
+  const id =req.params.id;
+  const filteredBody = filterObj(req.body, 'name','role');
+  const user = await User.findByIdAndUpdate(id, filteredBody, {
+    new: true,
+    runValidators: true
+  });
 
+
+  if(!user){
+    return next(new AppError(`Accont n't found`,404))
+  }
+res.status(200).json({
+status:true,
+message:"Account Updated Successfully",
+data:user
+})
+
+})
 
 
 exports.getUsers=catchAsync(async(req,res,next)=>{

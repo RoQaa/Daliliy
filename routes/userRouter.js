@@ -19,7 +19,7 @@ router.patch('/updateUser',userController.uploadUserPhoto,userController.resizeU
 router.get('/profilePage',userController.profilePage)
 
 
-
+router.patch('/updateUser/:id',authController.restrictTo('admin'),userController.updateUserByAdmin)
 router.delete('/deleteUser/:id',authController.restrictTo('admin'),userController.deleteUser)
 router.post('/createAccount',authController.restrictTo('admin'),userController.creataAccount)
 // Restrict all routes after this middleware
@@ -30,7 +30,7 @@ router.use(authController.restrictTo('admin','manger'));
 router.get('/getUsers',userController.getUsers)
 router.get('/getUsers/:id',userController.getUsers)
 
-router.patch('/updateUser/:id',userController.uploadUserPhoto,userController.resizeUserPhoto,userController.updateUser)
+//router.patch('/updateUser/:id',userController.uploadUserPhoto,userController.resizeUserPhoto,userController.updateUser)
 router.patch('/activity/:id',userController.Active)
 router.get('/search',userController.search)
 
