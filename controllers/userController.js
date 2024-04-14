@@ -135,12 +135,12 @@ exports.Active=catchAsync(async(req,res,next)=>{
 exports.search=catchAsync(async(req,res,next)=>{
   const searchTerm = req.query.term;
   //const results = await User.find({ $text: { $search: searchTerm } }).limit(10);
-  const results =await User.find({
-    name:{
-      $regex:searchTerm,
-      $options:"i"
-    }
-   })
+  const results = await User.find({
+    $or: [
+      { name: { $regex: searchTerm, $options: "i" } },
+      { email: { $regex: searchTerm, $options: "i" } }
+    ]
+  }).limit(10);
  /* const data = await User.find({
     $text:{
       $search:req.body.word
