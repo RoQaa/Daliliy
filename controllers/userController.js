@@ -79,7 +79,9 @@ exports.updateUser=catchAsync(async(req,res,next)=>{
     new: true,
     runValidators: true
   });
-
+          if(!updatedUser){
+            return next(new AppError(`Accont n't found`,404))
+          }
    res.status(200).json({
     status:true,
     data:updatedUser

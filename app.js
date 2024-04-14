@@ -22,7 +22,7 @@ app.use(helmet()); // set el htttp headers property
 
 app.use(cors());
 app.options('*',cors())
-
+// Poclicy for blocking images
 app.use((req, res, next) => {
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   next();
