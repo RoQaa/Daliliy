@@ -3,7 +3,7 @@ const sharp=require('sharp')
 const { catchAsync } = require(`${__dirname}/../utils/catchAsync`);
 const AppError = require(`${__dirname}/../utils/appError`);
 const User=require(`${__dirname}/../models/userModel`);
-const { __awaiter } = require('tslib');
+
 
 const filterObj = (obj, ...allowedFields) => {
     const newObj = {};
@@ -84,6 +84,7 @@ exports.updateUser=catchAsync(async(req,res,next)=>{
           }
    res.status(200).json({
     status:true,
+    message:"Account Updated Successfully",
     data:updatedUser
    })
 
@@ -110,10 +111,15 @@ exports.getUsers=catchAsync(async(req,res,next)=>{
   })
 })
 exports.deleteUser=catchAsync(async(req,res,next)=>{
-  await User.findByIdAndDelete(req.params.id)
-  res.status(200).json({
+  const user = await User.findById(req.params.id)
+  if(!user){
+    return next(new AppError(`Account n't found`,404))
+  }
+  await user.delete();
+
+  res.status(204).json({
     status:true,
-    message:"you Delete this User"
+    message:"you Delete this Account"
   })
 })
 
@@ -128,7 +134,13 @@ exports.Active=catchAsync(async(req,res,next)=>{
 
 exports.search=catchAsync(async(req,res,next)=>{
   const searchTerm = req.query.term;
-  const results = await User.find({ $text: { $search: searchTerm } }).limit(10);
+  //const results = await User.find({ $text: { $search: searchTerm } }).limit(10);
+  const results =await User.find({
+    name:{
+      $regex:searchTerm,
+      $options:"i"
+    }
+   })
  /* const data = await User.find({
     $text:{
       $search:req.body.word

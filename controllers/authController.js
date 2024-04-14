@@ -232,6 +232,10 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // 4) Log user in, send JWT
  
    // createSendToken(user,200,'password has changed successfully, please log in again',res);
+   res.status(200).json({
+    status:true,
+    message:"Password Updated "
+   })
   }
 );
 

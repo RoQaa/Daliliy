@@ -42,8 +42,9 @@ exports.deleteReview = (catchAsync(async (req, res, next) => {
         return next(new AppError('No document found with that ID', 404));
     }
 
-    res.status(204).json({
+    res.status(200).json({
         status: true,
+        message:"review Deleted"
     });
 }))
 
@@ -57,6 +58,7 @@ exports.updateReview = (catchAsync(async (req, res, next) => {
 
     res.status(202).json({
         status: true,
+        message:"review Updated",
         doc
     });
 }))
@@ -94,7 +96,8 @@ exports.deleteUserReview=catchAsync(async(req,res,next)=>{
         return next(new AppError(`You are n't allowed to do this action`,404))
     }
     await doc.deleteOne(); // or existingReview.remove()
-    res.status(204).json({
+    res.status(200).json({
         status: true,
+        message:"review Deleted"
     });
 })
