@@ -1,4 +1,6 @@
 const multer=require('multer')
+
+const path=require('path')
 const sharp=require('sharp')
 const Category=require(`${__dirname}/../models/categoryModel`)
 const Item =require(`${__dirname}/../models/itemModel`)
@@ -6,42 +8,46 @@ const { catchAsync } = require(`${__dirname}/../utils/catchAsync`);
 const AppError = require(`${__dirname}/../utils/appError`);
 
 const multerFilter = (req, file, cb) => {
-    
-    if (file.mimetype.startsWith('image')) {
-      cb(null, true);
-    } else {
-      cb(new AppError('Not an image! Please upload only images.', 400), false);
-    }
-  };
-  
-  const multerStorage = multer.memoryStorage();
-  
-  
-  
-  const upload = multer({
-    storage: multerStorage,
-    fileFilter: multerFilter
-  });
-  
-  exports.uploadCatPhoto = upload.single('image');
-  
-  //resize midlleWare
-  exports.resizeCatPhoto = catchAsync(async (req, res, next) => {
-    if (!req.file) return next();
+  if (file.mimetype.startsWith('image')) {
+    console.log(file)
+    cb(null, true);
+  } else {
+    cb(new Error('Not an image! Please upload only images.'), false);
+  }
+};
 
-    req.file.filename = `cat-${req.params.id}-${Date.now()}.jpeg`;
-  
-    await sharp(req.file.buffer)
-      .resize(500, 500)
-      .toFormat('jpeg')
-      .jpeg({ quality: 90 })
-      .toFile(`public/img/cats/${req.file.filename}`);
-  
-     
-      //const location=`http://localhost:5000/api/public/img/cats`
-       
-    next();
-  });
+const multerStorage = multer.memoryStorage();
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter
+});
+
+exports.uploadCatPhoto = upload.single('image');
+
+exports.resizeCatPhoto = async (req, res, next) => {
+  if (!req.file) return next();
+
+  const Extension =  path.extname(req.file.originalname)//mime.extension(req.file.mimetype);
+ const fileExtension=Extension.replace('.','')
+
+  // Validate file extension
+  if (!fileExtension || !['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+    return next(new Error('Unsupported file format!'));
+  }
+
+  const filename = `cat-${req.params.id}-${Date.now()}.${fileExtension}`;
+
+  await sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat(fileExtension)
+    .jpeg({ quality: 90 }) // You can adjust options based on the file format
+    .toFile(`public/img/cats/${filename}`);
+
+  req.file.filename = filename;
+
+  next();
+};
   
 
 
