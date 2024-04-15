@@ -66,6 +66,7 @@ next();
 
 exports.updateItem=catchAsync(async(req,res,next)=>{
 const data = await Item.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
+console.log(req.body)
   if(!data){
     return next(new AppError(`Item not found`,404))
   }
