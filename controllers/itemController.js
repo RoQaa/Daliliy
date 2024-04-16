@@ -1,5 +1,3 @@
-const express=require('express');
-const router = express.Router();
 const multer =require('multer')
 const sharp=require('sharp')
 const Item = require(`${__dirname}/../models/itemModel`)
@@ -22,7 +20,7 @@ const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilter
 });
-router.use(upload.any());
+
 //multiple
 exports.uploadItemsPhotos = upload.fields([
   {name:"backGroundImage",maxCount:1},
