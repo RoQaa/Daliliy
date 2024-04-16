@@ -130,7 +130,7 @@ exports.deleteUser=catchAsync(async(req,res,next)=>{
   }
   await user.delete();
 
-  res.status(204).json({
+  res.status(200).json({
     status:true,
     message:"you Delete this Account"
   })
