@@ -21,8 +21,7 @@ const app = express();
 //set security http headers
 app.use(helmet()); // set el htttp headers property
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+
 
 
 app.use(cors());
