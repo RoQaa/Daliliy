@@ -20,7 +20,7 @@ router.use(authController.restrictTo('admin','manger'));
 router.get('/getAllitems/:id',itemController.getAllItemsOfCategoreis)
 router.get('/getAllitems',itemController.getAllItems)
 router.post('/addItem',itemController.addItem)
-router.post('/updateItem/:id',itemController.uploadItemsPhotos,itemController.resizeItemsImages,itemController.updateItem)
+router.patch('/updateItem/:id',itemController.uploadItemsPhotos,itemController.resizeItemsImages,itemController.updateItem)
 router.delete('/deleteItem/:id',itemController.deleteItem)
 
 
