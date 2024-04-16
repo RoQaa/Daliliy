@@ -1,5 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
+const bodyParser = require('body-parser')
 const morganBody = require('morgan-body');
 const path=require('path')
 const rateLimit = require('express-rate-limit'); // security
@@ -19,6 +20,10 @@ const app = express();
 
 //set security http headers
 app.use(helmet()); // set el htttp headers property
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
 
 app.use(cors());
 app.options('*',cors())
