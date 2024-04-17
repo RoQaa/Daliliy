@@ -13,6 +13,6 @@ router.delete('/deleteUserReview',reviewController.deleteUserReview)
 
 
 router.use(authController.restrictTo('admin','manger'))
-router.patch('/updateReview',reviewController.updateReview)
-router.delete('/deleteReview',reviewController.deleteReview)
+router.patch('/updateReview/:id',reviewController.updateReview)
+router.delete('/deleteReview/:id',reviewController.deleteReview)
 module.exports=router;

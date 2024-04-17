@@ -35,7 +35,7 @@ exports.addReviews = (catchAsync(async (req, res, next) => {
 }))
 
 exports.deleteReview = (catchAsync(async (req, res, next) => {
-    const doc = await Review.findByIdAndDelete(req.body.reviewId)
+    const doc = await Review.findByIdAndDelete(req.params.id)
 
 
     if (!doc) {
@@ -50,7 +50,7 @@ exports.deleteReview = (catchAsync(async (req, res, next) => {
 
 
 exports.updateReview = (catchAsync(async (req, res, next) => {
-    const doc = await Review.findByIdAndUpdate(req.body.reviewId, req.body, { new: true, runValidators: true })
+    const doc = await Review.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
 
     if (!doc) {
         return next(new AppError('No document found with that ID', 404));
