@@ -1,5 +1,6 @@
 const multer=require('multer')
-const sharp=require('sharp')
+const sharp=require('sharp');
+const Review = require('../models/reviewModel');
 const { catchAsync } = require(`${__dirname}/../utils/catchAsync`);
 const AppError = require(`${__dirname}/../utils/appError`);
 const User=require(`${__dirname}/../models/userModel`);
@@ -124,10 +125,12 @@ exports.getUsers=catchAsync(async(req,res,next)=>{
   })
 })
 exports.deleteUser=catchAsync(async(req,res,next)=>{
+
   const user = await User.findById(req.params.id)
   if(!user){
     return next(new AppError(`Account n't found`,404))
   }
+  await Review.deleteMany({user:req.params.id})
   await user.delete();
 
   res.status(200).json({
