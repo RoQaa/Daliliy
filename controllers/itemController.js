@@ -161,6 +161,17 @@ res.status(200).json({
 })
 
 })
+exports.getSpecificItemByAdmin=catchAsync(async(req,res,next)=>{
+  const item=await Item.findById(req.params.id).populate('reviews');
+  if(!item){
+      return next(new AppError(`item not found`,404))
+  }
+  res.status(200).json({
+      status:true,
+      data:item   
+  })
+  
+  })
 
 exports.search=catchAsync(async(req,res,next)=>{
   
