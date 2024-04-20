@@ -111,7 +111,19 @@ exports.getUsers=catchAsync(async(req,res,next)=>{
   let data
   if(req.params.id){
      data = await User.findById(req.params.id);
-  }else{data = await User.find();}
+  }else{data = await User.aggregate([
+    {
+      $project: { // Project all fields
+        _id: 1,
+        isActive: 1,
+        profileImage:1,
+        name:1,
+        email:1,
+        role:1
+        // Include other fields as needed
+      }
+    }
+  ])}
 
    
   if(!data){
@@ -134,6 +146,17 @@ exports.deleteUser=catchAsync(async(req,res,next)=>{
   await user.delete();
 
   res.status(200).json({
+    status:true,
+    message:"you Delete this Account"
+  })
+})
+
+
+exports.deleteAccount=catchAsync(async(req,res,next)=>{
+  await Review.deleteMany({user:req.user.id})
+ await User.findByIdAndDelete(req.user.id)
+
+ res.status(200).json({
     status:true,
     message:"you Delete this Account"
   })

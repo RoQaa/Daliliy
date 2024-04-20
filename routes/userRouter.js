@@ -17,8 +17,10 @@ router.get('/logout',authController.logOut)
 //user Routes
 router.patch('/updateUser',userController.uploadUserPhoto,userController.resizeUserPhoto,userController.updateUser)
 router.get('/profilePage',userController.profilePage)
+router.delete('/deleteAccount',userController.deleteAccount)
 
 
+//Just Admin routes
 router.patch('/updateUser/:id',authController.restrictTo('admin'),userController.updateUserByAdmin)
 router.delete('/deleteUser/:id',authController.restrictTo('admin'),userController.deleteUser)
 router.post('/createAccount',authController.restrictTo('admin'),userController.creataAccount)
