@@ -33,7 +33,7 @@ router.get('/getUsers',userController.getUsers)
 router.get('/getUsers/:id',userController.getUsers)
 
 //router.patch('/updateUser/:id',userController.uploadUserPhoto,userController.resizeUserPhoto,userController.updateUser)
-router.patch('/activity/:id',userController.Active)
+
 router.get('/search',userController.search)
 
 

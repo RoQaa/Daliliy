@@ -88,7 +88,7 @@ exports.updateUser=catchAsync(async(req,res,next)=>{
 
 exports.updateUserByAdmin=catchAsync(async(req,res,next)=>{
   const id =req.params.id;
-  const filteredBody = filterObj(req.body, 'name','role');
+  const filteredBody = filterObj(req.body, 'name','role','isActive');
   const user = await User.findByIdAndUpdate(id, filteredBody, {
     new: true,
     runValidators: true
@@ -168,13 +168,7 @@ exports.deleteAccount=catchAsync(async(req,res,next)=>{
 })
 
 
-exports.Active=catchAsync(async(req,res,next)=>{
-  await User.findByIdAndUpdate(req.params.id,{isActive:req.body.active},{new:true,runValidators:true})
-  res.status(200).json({
-    status:true,
-    message:"you updated this User"
-  })
-})
+
 
 exports.search=catchAsync(async(req,res,next)=>{
   const searchTerm = req.query.term;
