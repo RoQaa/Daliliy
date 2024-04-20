@@ -90,7 +90,7 @@ exports.updateUserByAdmin=catchAsync(async(req,res,next)=>{
   const id =req.params.id;
   const filteredBody = filterObj(req.body, 'name','role','isActive');
   const user = await User.aggregate([
-    { $match: { _id: mongoose.Types.ObjectId(id) } },
+    { $match: { _id: req.params.id } },
     {
       $set: {
         name: filteredBody.name,
