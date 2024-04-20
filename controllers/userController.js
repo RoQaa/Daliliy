@@ -89,10 +89,16 @@ exports.updateUser=catchAsync(async(req,res,next)=>{
 exports.updateUserByAdmin=catchAsync(async(req,res,next)=>{
   const id =req.params.id;
   const filteredBody = filterObj(req.body, 'name','role','isActive');
-  const user = await User.findByIdAndUpdate(id, filteredBody, {
-    new: true,
-    runValidators: true
-  });
+  const user = await User.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(id) } },
+    {
+      $set: {
+        name: filteredBody.name,
+        role: filteredBody.role,
+        isActive: filteredBody.isActive
+      }
+    }
+  ]);
 
 
   if(!user){
