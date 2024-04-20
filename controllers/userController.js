@@ -155,10 +155,15 @@ exports.deleteUser=catchAsync(async(req,res,next)=>{
 exports.deleteAccount=catchAsync(async(req,res,next)=>{
   await Review.deleteMany({user:req.user.id})
  await User.findByIdAndDelete(req.user.id)
+ res.cookie('jwt','loggedout',{
+  expires:new Date(Date.now()+10*1000),
+  httpOnly:true
+});
 
  res.status(200).json({
     status:true,
-    message:"you Delete this Account"
+    message:"you Delete this Account",
+    token:"deletedAccount"
   })
 })
 
