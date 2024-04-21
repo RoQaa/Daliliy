@@ -91,20 +91,25 @@ exports.updateUser=catchAsync(async(req,res,next)=>{
 exports.updateUserByAdmin=catchAsync(async(req,res,next)=>{
   const id =req.params.id;
   const filteredBody = filterObj(req.body, 'name','role','isActive');
-  const updatedUser = await User.findOneAndUpdate(
-    { _id: mongoose.Types.ObjectId(id) }, // Filter: Match the user by its _id
-    { 
+  const user = await User.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(id) } },
+    {
       $set: {
         name: filteredBody.name,
         role: filteredBody.role,
         isActive: filteredBody.isActive
       }
+      
     },
-    { new: true } // This option returns the updated document
-  );
-  
+ 
+    {
+      $merge: {
+        into: "users", // The target collection to merge the documents into
+        whenMatched: "replace" // Specifies how to handle matching documents
+      }
+    }
+  ]);
 
-await user.save();
 
   if(!user){
     return next(new AppError(`Accont n't found`,404))
@@ -112,7 +117,7 @@ await user.save();
 res.status(200).json({
 status:true,
 message:"Account Updated Successfully",
-data:updatedUser
+
 })
 
 })
