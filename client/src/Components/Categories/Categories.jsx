@@ -147,7 +147,9 @@ export default function Categories() {
         let formData = new FormData();
 
         formData.append('image', values.image);
-        let { data } = await axios.patch(`https://dalilalhafr.com/api/cats/updateCategory/${CateId}`, formData, { headers })
+        let { data } = await axios.patch(`https://dalilalhafr.com/api/cats/updateCategory/${CateId}`, formData, { headers }).catch((err)=>{
+            toast.error("sorry you can add another image")
+        })
         if (data.status == false) {
             toast.error(data.message)
             setCateId(null)
@@ -280,8 +282,7 @@ export default function Categories() {
 
             <button onClick={() => { setAddMood(true) }} className='btn btn-outline-success w-100'>Add new Categore</button>
 
-
-            <table class="table table-striped table-hover text-center my-3">
+{CategorysList.length ? <table class="table table-striped table-hover text-center my-3">
                 <thead>
                     <tr className='text-capitalize'>
                         <th scope="col-2">#</th>
@@ -320,7 +321,8 @@ export default function Categories() {
 
 
                 </tbody>
-            </table>
+            </table> : <h2 className='text-center my-5'>No Categories</h2>}
+            
 
         </div>}
 

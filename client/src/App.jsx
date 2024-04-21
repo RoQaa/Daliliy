@@ -59,7 +59,7 @@ function App() {
       path: '', element: <Layout userInfo={userInfo} getUserInfo={getUserInfo} userData={userData} setUserData={setUserData} />, children: [
         { index: true, element: <ProtactecdRoute><Users /></ProtactecdRoute> },
         { path: 'categories', element: <ProtactecdRoute> <Categories /> </ProtactecdRoute> },
-        { path: 'items', element: <ProtactecdRoute> <Items/>  </ProtactecdRoute> },
+        { path: 'items', element:<ProtactecdRoute>  <Items/> </ProtactecdRoute>  },
         { path: 'createUser', element: <ProtactecdRoute> <CreateUser />  </ProtactecdRoute> },
         { path: 'profile', element: <ProtactecdRoute> <Profile />  </ProtactecdRoute> },
         { path: 'updateProfile', element: <ProtactecdRoute> <UpdateProfile />  </ProtactecdRoute> },

@@ -20,7 +20,7 @@ export default function Login({ saveData }) {
     let { data } = await axios.post('https://dalilalhafr.com/api/auth/login', values).catch((err) => {
       setmessageErr2(`${err.response.data.message}`)
       setloading(false)
-      toast.success("fi haga 8alt")
+      toast.success("srever error please try again")
     })
 
     if (data.status == true) {

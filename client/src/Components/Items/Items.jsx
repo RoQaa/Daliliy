@@ -214,7 +214,6 @@ export default function Items() {
             }
         }
 
-
         // const token = 'your-auth-token'; // Replace with your actual authentication token
         const url = `https://dalilalhafr.com/api/items/updateItem/${values._id}`;
 
@@ -393,73 +392,73 @@ export default function Items() {
             </div>
             : null}
 
-           
-            
-          
+
+
+
 
         <div className="ItemComponent">
-        <h1 className='text-center'>Items</h1>
-        {loading ? <div className='col-12 text-center my-5 py-5'>
-            <i className='fa fa-spin fa-spinner fa-3x text-success'></i>
-        </div> : <div className='col-11 mx-auto my-5 tableCss'>
-            <button onClick={() => { setAddMood(true) }} className='btn btn-outline-success w-100'>Add new Item</button>
+            <h1 className='text-center'>Items</h1>
+            {loading ? <div className='col-12 text-center my-5 py-5'>
+                <i className='fa fa-spin fa-spinner fa-3x text-success'></i>
+            </div> : <div className='col-11 mx-auto my-5 tableCss'>
+                <button onClick={() => { setAddMood(true) }} className='btn btn-outline-success w-100'>Add new Item</button>
+                {ItemsList.length ? <table class="table table-striped table-hover text-center my-3">
+                    <thead>
+                        <tr className='text-capitalize'>
+                            <th scope="col">#</th>
+                            <th scope="col">name</th>
+                            <th scope="col">background image</th>
+                            <th scope="col">category</th>
 
-            <table class="table-test table-responsive table-striped table-hover text-center my-3">
-                <thead>
-                    <tr className='text-capitalize'>
-                        <th scope="col">#</th>
-                        <th scope="col">name</th>
-                        <th scope="col">background image</th>
-                        <th scope="col">category</th>
+                            <th scope="col">ratings Average</th>
+                            <th scope="col">ratings Quantity</th>
+                            <th scope="col-5">Actions</th>
 
-                        <th scope="col">ratings Average</th>
-                        <th scope="col">ratings Quantity</th>
-                        <th scope="col-5">Actions</th>
-
-
-                    </tr>
-                </thead>
-                <tbody>
-
-
-
-
-                    {ItemsList.map((item, index) => {
-                        return <tr key={item._id} className='align-baseline'>
-                            <td scope="col">{index + 1}</td>
-                            <td>{item.name}</td>
-                            <td><img className='item-img img-fluid' src={item.backGroundImage} alt="" /></td>
-                            <td >{item?.category?.title}</td>
-
-                            <td ><i className='fa fa-star text-warning mx-2'></i>
-                                {item.ratingsAverage}</td>
-                            <td >{item.ratingsQuantity}</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-outline-secondary " type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fa-solid fa-list fa-lg"></i>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li onClick={() => deleteItem(item._id)} className="dropdown-item">Delete</li>
-                                        <li onClick={() => updateItem(index)} className="dropdown-item">Update</li>
-                                        <li className="dropdown-item"><Link to={'/oneItem/' + item._id} className='text-decoration-none text-black'>Details</Link></li>
-
-
-                                    </ul>
-                                </div>
-
-                            </td>
 
                         </tr>
-                    })}
+                    </thead>
+                    <tbody>
 
 
 
 
-                </tbody>
-            </table>
+                        {ItemsList.map((item, index) => {
+                            return <tr key={item._id} className='align-baseline'>
+                                <td scope="col">{index + 1}</td>
+                                <td>{item.name}</td>
+                                <td><img className='item-img img-fluid' src={item.backGroundImage} alt="" /></td>
+                                <td >{item?.category?.title}</td>
 
-        </div>}
+                                <td ><i className='fa fa-star text-warning mx-2'></i>
+                                    {item.ratingsAverage}</td>
+                                <td >{item.ratingsQuantity}</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary " type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa-solid fa-list fa-lg"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li onClick={() => deleteItem(item._id)} className="dropdown-item">Delete</li>
+                                            <li onClick={() => updateItem(index)} className="dropdown-item">Update</li>
+                                            <li className="dropdown-item"><Link to={'/oneItem/' + item._id} className='text-decoration-none text-black'>Details</Link></li>
+
+
+                                        </ul>
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        })}
+
+
+
+
+                    </tbody>
+                </table> : <h2 className='text-center my-5'>No items</h2>}
+
+
+            </div>}
         </div>
 
 

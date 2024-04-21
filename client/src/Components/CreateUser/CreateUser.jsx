@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 export default function CreateUser() {
     let navigate = useNavigate()
     const [Loading, setLoading] = useState(false)
+    const [roleList, setroleList] = useState(['user', 'admin', 'manger'])
 
 
     let token = localStorage.getItem('userToken')
@@ -24,22 +25,29 @@ export default function CreateUser() {
             passwordConfirm: values.passwordConfirm,
             role: values.role
 
-        }, { headers }).catch((err)=>{
-            toast.success('email is alerady exist')
+        }, { headers }).catch((err) => {
+            toast.error('email is alerady exist')
             setLoading(false)
 
         })
-        formik.resetForm();
-        setLoading(false)
-        navigate('/')
-        toast.success(data.message)
+        if(data.status == false){
+            setLoading(false)
+            toast.error(data.message)
+        }else{
+            formik.resetForm();
+            setLoading(false)
+            navigate('/')
+            toast.success(data.message)
+        }
+        console.log(data);
+        
     }
 
     let validationSchema = Yup.object({
         name: Yup.string().required('name is required'),
         email: Yup.string().required('email is required'),
         password: Yup.string().required('password is required'),
-        passwordConfirm: Yup.string().required('passwordConfirm is required'),
+        passwordConfirm: Yup.string().equals([Yup.ref('password')]).required('passwordConfirm is required'),
         role: Yup.string().required('role is required'),
 
     })
@@ -86,32 +94,16 @@ export default function CreateUser() {
                 {formik.errors.passwordConfirm && formik.touched.passwordConfirm ? <div className='form-text text-danger'>{formik.errors.passwordConfirm}</div> : null}
 
 
+                <label for="role" class="form-label mt-2 ">role</label>
 
-                <div className='row mt-2 d-flex align-items-baseline'>
-                    <div className='col-4 '>
-                        <label for="role" className="form-label mt-2">Role</label>
-                    </div>
-                    <div className='col-4 '>
-                        <div>
-                            <input type='radio' id='role-admin' name='role' value='admin' checked={formik.values.role === 'admin'} onChange={formik.handleChange} onBlur={formik.handleBlur} className='form-check-label mx-2' />
-                            <label htmlFor='role-admin'>Admin</label>
-                        </div>
-                    </div>
+                <select class="form-select" aria-label="Default select example" name='role' id='role' value={formik.values.role} onChange={formik.handleChange} onBlur={formik.handleBlur}>
 
-                    <div className='col-4 '>
-                        <div>
-                            <input type='radio' id='role-user' name='role' value='user' checked={formik.values.role === 'user'} onChange={formik.handleChange} onBlur={formik.handleBlur} className='form-check-label mx-2' />
-                            <label htmlFor='role-user'>User</label>
-                        </div>
+                    <option disabled selected>select role</option>
+                    {roleList.map((role) => {
+                        return <option value={role}>{role}</option>
+                    })}
 
-                    </div>
-                    {formik.errors.role && formik.touched.role ? <div className='form-text text-danger'>{formik.errors.role}</div> : null}
-
-                    <div className='col-12'>
-                        {formik.errors.status && formik.touched.status ? <div className='form-text text-danger'>{formik.errors.status}</div> : null}
-                    </div>
-
-                </div>
+                </select>
 
                 <div className='row my-2 g-3'>
                     {Loading ?

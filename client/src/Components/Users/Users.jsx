@@ -82,11 +82,12 @@ export default function Users() {
         }
     }
 
-    
+
     async function handleUpdate(values) {
+
         setLoading(true)
-        let { data } = await axios.patch(`https://dalilalhafr.com/api/auth/updateUser/${values._id}`, { name: values.name, role: values.role ,isActive:false}, { headers })
-       
+        let { data } = await axios.patch(`https://dalilalhafr.com/api/auth/updateUser/${values._id}`, { name: values.name, role: values.role, isActive: values.isActive }, { headers })
+
         if (data.status == true) {
             toast.success("Updated Successfully")
             dispatch(getAllUsers())
@@ -103,7 +104,7 @@ export default function Users() {
             name: "",
             email: "",
             role: "",
-            isActive:true
+            isActive: true
         });
     }
 
@@ -167,8 +168,7 @@ export default function Users() {
                 <i className='fa fa-spin fa-spinner fa-3x text-success'></i>
             </div> : <div className='col-11 tableCss mx-auto my-5'>
 
-
-                <table class="table  table-striped table-hover text-center ">
+                {usersList.length ? <table class="table  table-striped table-hover text-center ">
                     <thead>
                         <tr className='text-capitalize'>
                             <th scope="col">#</th>
@@ -188,7 +188,8 @@ export default function Users() {
                                 <td>{user.name}</td>
                                 <td>{user.email}</td>
                                 <td>{user.role}</td>
-                                {user.isActive == true ? <td><span class='badge text-bg-success' >Active</span></td> : <td><span class='badge text-bg-danger' >Not Active</span></td>}
+                                {user.isActive == "true" || user.isActive == true ? <td><span class='badge text-bg-success' >Active</span></td> : <td><span class='badge text-bg-danger' >Not Active</span></td>}
+
                                 <td>
                                     <div class="dropdown">
                                         <button class="btn btn-outline-secondary " type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -211,7 +212,8 @@ export default function Users() {
 
 
                     </tbody>
-                </table>
+                </table> : <h2 className='text-center my-5'>No Users</h2>}
+
             </div>}
 
 
