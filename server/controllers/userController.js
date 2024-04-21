@@ -91,16 +91,18 @@ exports.updateUser=catchAsync(async(req,res,next)=>{
 exports.updateUserByAdmin=catchAsync(async(req,res,next)=>{
   const id =req.params.id;
   const filteredBody = filterObj(req.body, 'name','role','isActive');
-  const user = await User.aggregate([
-    { $match: { _id: mongoose.Types.ObjectId(id) } },
-    {
+  const updatedUser = await User.findOneAndUpdate(
+    { _id: mongoose.Types.ObjectId(id) }, // Filter: Match the user by its _id
+    { 
       $set: {
         name: filteredBody.name,
         role: filteredBody.role,
         isActive: filteredBody.isActive
       }
-    }
-  ]);
+    },
+    { new: true } // This option returns the updated document
+  );
+  
 
 await user.save();
 
@@ -110,7 +112,7 @@ await user.save();
 res.status(200).json({
 status:true,
 message:"Account Updated Successfully",
-data:user
+data:updatedUser
 })
 
 })
