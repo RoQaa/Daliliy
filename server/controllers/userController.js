@@ -102,6 +102,7 @@ exports.updateUserByAdmin=catchAsync(async(req,res,next)=>{
     }
   ]);
 
+await user.save();
 
   if(!user){
     return next(new AppError(`Accont n't found`,404))
