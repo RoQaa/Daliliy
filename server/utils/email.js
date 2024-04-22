@@ -22,10 +22,10 @@ const sendEmail=async (options) => {
     const hbsOptions={
         viewEngine:{
             extName:".hbs",
-            partialsDir:path.resolve(`${__dirname}/.${__dirname}views/`),
+            partialsDir:path.resolve(`${__dirname}/../views/`),
             defaultLayout:false,
         },
-        viewPath:path.resolve(`${__dirname}/.${__dirname}views/`),
+        viewPath:path.resolve(`${__dirname}/../views/`),
         extName:".hbs"
     };
      transporter.use('compile',hbs(hbsOptions))
@@ -39,7 +39,7 @@ const sendEmail=async (options) => {
         
         //html:
         //TODO: change Template
-        template:'index',
+        template:'OTP',
         context:{
             name:options.name,
             otp:options.otp
