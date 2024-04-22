@@ -83,7 +83,7 @@ exports.updateUser=catchAsync(async(req,res,next)=>{
    res.status(200).json({
     status:true,
     message:"Account Updated Successfully",
-    data:updatedUser
+  //  data:updatedUser
    })
 
 })
@@ -195,13 +195,7 @@ exports.search=catchAsync(async(req,res,next)=>{
       { email: { $regex: searchTerm, $options: "i" } }
     ]
   }).limit(10);
- /* const data = await User.find({
-    $text:{
-      $search:req.body.word
-      
-    }
-  })
-  */
+
   if(!results){
     return next(new AppError(`Data n't found`,404))
   }

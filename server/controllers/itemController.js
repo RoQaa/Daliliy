@@ -66,14 +66,14 @@ next();
 
 exports.updateItem=catchAsync(async(req,res,next)=>{
 const data = await Item.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
-console.log(req.body)
+
   if(!data){
     return next(new AppError(`Item not found`,404))
   }
   res.status(200).json({
     status:true,
     message:"Item Updated Successfully",
-    data
+    //data
   })
 
 })
@@ -86,7 +86,7 @@ exports.addItem = catchAsync(async (req, res, next) => {
   res.status(200).json({
       status: true,
       message:`item created Successfully`,
-      data
+      //data
   })
 
 })
@@ -175,13 +175,7 @@ exports.getSpecificItemByAdmin=catchAsync(async(req,res,next)=>{
 
 exports.search=catchAsync(async(req,res,next)=>{
   
- /* const data = await Item.find({
-    $text:{
-      $search:req.body.word
-      
-    }
-  })
-  */
+
  const data = await Item.find({
   name:{
     $regex:req.body.word,

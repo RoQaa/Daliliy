@@ -59,7 +59,7 @@ exports.updateReview = (catchAsync(async (req, res, next) => {
     res.status(202).json({
         status: true,
         message:"review Updated",
-        doc
+        //doc
     });
 }))
 
@@ -83,7 +83,7 @@ if(!doc ){
 res.status(200).json({
     status:true,
     message:"Review Updated",
-    doc
+   // doc
 })
 })
 
