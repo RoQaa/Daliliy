@@ -2,11 +2,17 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import logo from '../../images/logo.jpeg'
+import axios from 'axios';
 
 export default function NavbarTop({ userData, setUserData }) {
     let navigate = useNavigate()
-
-    function logOut() {
+    let token = localStorage.getItem('userToken')
+    let headers = {
+        // 'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`
+    }
+   async function logOut() {
+        let { data } = await axios(`https://dalilalhafr.com/api/auth/logout`,{ headers })
         localStorage.clear()
         setUserData(null)
     }
