@@ -1,18 +1,24 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-let token = localStorage.getItem('userToken')
-let headers = {
-    Authorization: `Bearer ${token}`
-}
 
 const body = { title: "All" }
 export let getAllItems = createAsyncThunk('item/getAllItems', async () => {
+
+    let token = localStorage.getItem('userToken')
+    let headers = {
+        Authorization: `Bearer ${token}`
+    }
+
     let { data } = await axios.get('https://dalilalhafr.com/api/items/getAllitems', { headers })
     return data;
 })
 export let getOneItem = createAsyncThunk('item/getOneItem', async (id) => {
-    
+    let token = localStorage.getItem('userToken')
+    let headers = {
+        Authorization: `Bearer ${token}`
+    }
+
     let { data } = await axios(`https://dalilalhafr.com/api/items/getSpecificItem/${id}`,{headers})
     return data;
 })
