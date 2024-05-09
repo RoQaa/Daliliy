@@ -83,11 +83,14 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!email || !password) {
     return next(new AppError('please provide email & password', 400));
   }
+  /*
   const validEmail = validator.isEmail(email);
   if (!validEmail) {
 
     return next(new AppError(`Please provide a correct email`, 400));
   }
+  */
+
   //2)check user exists && password is correct
 
   const user = await User.findOne({ email: email }).select('+password'); // hyzaod el password el m5fee aslan
