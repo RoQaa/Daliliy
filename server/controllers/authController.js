@@ -103,18 +103,14 @@ exports.login = catchAsync(async (req, res, next) => {
       )) /** 34an hyrun fe el correct 7ta loo ml2hoo4*/
     )
   ) {
-    if(req.headers.lang==='AR'){
-      return next(new AppError('البريد الالكتروني او كلمة المرور غير صحيحة', 401));
-    }
 
-    return next(new AppError('Incorrect email or password', 401));
+
+    return next(new AppError('Incorrect email or password', 400));
   }
   //3) if everything ok send token back to the client
-  if(req.headers.lang==='AR'){
-    createSendToken(user, 200, 'تم تسجيل الدخول بنجاح', res);
-  }else{
+
   createSendToken(user, 200, 'log in successfully', res);
-  }
+
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
@@ -216,13 +212,13 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     return next(new AppError("Current password isn't correct", 400));
   }
     if(!req.body.newPassword||!req.body.newPasswordConfirm){
-      return next(new AppError("Please Enter new Password and password Confirm", 401));
+      return next(new AppError("Please Enter new Password and password Confirm", 400));
     }
     if(req.body.newPassword!==req.body.newPasswordConfirm){
-      return next(new AppError("Password and Password confirm aren't the same", 401));
+      return next(new AppError("Password and Password confirm aren't the same", 400));
     }
     if ((await user.correctPassword(req.body.newPassword, user.password))){
-      return next(new AppError("it's the same Password", 401));
+      return next(new AppError("it's the same Password", 400));
     }
   // 3) If so, update password
   user.password = req.body.newPassword;
