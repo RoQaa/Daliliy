@@ -263,12 +263,7 @@ exports.logOut = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
   //1)Getting token and check it's there
   let token;
-  if (req.headers.authorization === 'Bearer null') {
-    if (req.headers.lang === 'AR') {
-      return next(new AppError('برجاء تسجيل الدخول اولا', 401));
-    }
-    return next(new AppError("Your're not logged in please log in", 401));
-  }
+
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
@@ -278,7 +273,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   if (!token) {
 
-    return next(new AppError("Your're not logged in please log in", 404)); //401 => is not 'authorized
+    return next(new AppError("Your're not logged in please log in", 401)); //401 => is not 'authorized
   }
   //2)Verification token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
@@ -315,7 +310,7 @@ exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       return next(
-        new AppError('You do not have permission to preform this action', 403)
+        new AppError('You do not have permission to preform this action', 401)
       );
     }
     next();
