@@ -71,7 +71,7 @@ exports.addCategory=catchAsync(async(req,res,next)=>{
         res.status(201).json({
             status:true,
             message:"Category Created Successfully",
-           // data
+            data
         })
 
 })
