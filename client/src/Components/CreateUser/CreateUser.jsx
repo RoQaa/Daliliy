@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
 import { toast } from "react-hot-toast";
 
-export default function CreateUser() {
+export default function CreateUser({ setUserData }) {
     let navigate = useNavigate()
     const [Loading, setLoading] = useState(false)
     const [roleList, setroleList] = useState(['user', 'admin', 'manger'])
@@ -18,7 +18,7 @@ export default function CreateUser() {
 
     async function handleUpdate(values) {
         setLoading(true)
-        let { data } = await axios.post(`https://dalilalhafr.com/api/auth/createAccount`, {
+        await axios.post(`https://dalilalhafr.com/api/auth/createAccount`, {
             name: values.name,
             email: values.email,
             password: values.password,
@@ -26,21 +26,32 @@ export default function CreateUser() {
             role: values.role
 
         }, { headers }).catch((err) => {
-            toast.error('email is alerady exist')
-            setLoading(false)
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                toast.error(err?.response?.data?.message)
+                setLoading(false)
+            } else {
+                toast.error(err?.response?.data?.message)
+                setLoading(false)
+
+            }
+
+
+        }).then((res) => {
+            if (res?.data?.status == false) {
+                setLoading(false)
+                toast.error(res?.data?.message)
+            } else {
+                formik.resetForm();
+                setLoading(false)
+                navigate('/')
+                toast.success(res?.data?.message)
+            }
 
         })
-        if(data.status == false){
-            setLoading(false)
-            toast.error(data.message)
-        }else{
-            formik.resetForm();
-            setLoading(false)
-            navigate('/')
-            toast.success(data.message)
-        }
-        console.log(data);
-        
+
+
     }
 
     let validationSchema = Yup.object({
@@ -49,7 +60,6 @@ export default function CreateUser() {
         password: Yup.string().required('password is required'),
         passwordConfirm: Yup.string().equals([Yup.ref('password')]).required('passwordConfirm is required'),
         role: Yup.string().required('role is required'),
-
     })
 
     let formik = useFormik({

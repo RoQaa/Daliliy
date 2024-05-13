@@ -8,6 +8,7 @@ export let getAllCategorys = createAsyncThunk('category/getAllCategorys', async 
         Authorization: `Bearer ${token}`
     }
     let {data}= await axios('https://dalilalhafr.com/api/cats/getCats', { headers  })
+    console.log(data);
     return data;
 })
 

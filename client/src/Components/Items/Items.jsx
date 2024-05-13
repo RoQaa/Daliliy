@@ -8,95 +8,110 @@ import axios from 'axios';
 import { toast } from "react-hot-toast";
 import { Link } from 'react-router-dom';
 import request from 'superagent';
-export default function Items() {
+
+
+export default function Items({ setUserData }) {
     const [UpdateMood, setUpdateMood] = useState(false)
     const [AddMood, setAddMood] = useState(false)
     const [AddImageMood, setAddImageMood] = useState(false)
     const [categoryList, setcategoryList] = useState([])
+    const [ItemsList, setItemsList] = useState([])
+
+
+
     const [Loading, setLoading] = useState(false)
+
+    const [GetLoading, setGetLoading] = useState(false)
+
+
     let token = localStorage.getItem('userToken')
     let headers = {
         // 'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`
     }
 
-    let { ItemsList, loading } = useSelector((state) => state.ItemReduser)
+    // let { ItemsList, loading, authError, authErrorMsg } = useSelector((state) => state.ItemReduser)
     let dispatch = useDispatch()
 
 
+
+    async function getAllItems() {
+        setGetLoading(true)
+        let token = localStorage.getItem('userToken')
+        let headers = {
+            Authorization: `Bearer ${token}`
+        }
+        await axios.get('https://dalilalhafr.com/api/items/getAllitems', { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                setGetLoading(false)
+                toast.error(err?.response?.data?.message)
+            } else {
+                setGetLoading(false)
+                toast.error(err?.response?.data?.message)
+            }
+
+        }).then((res) => {
+            setItemsList(res?.data?.data)
+            setGetLoading(false)
+        })
+
+
+
+    }
     useEffect(() => {
-        dispatch(getAllItems())
+        getAllItems()
         getCategories()
     }, [])
-
-
-
     async function getCategories() {
-        let { data } = await axios('https://dalilalhafr.com/api/cats/getCats', { headers })
-        setcategoryList(data.data)
+        await axios('https://dalilalhafr.com/api/cats/getCats', { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                toast.error(err?.response?.data?.message)
+            } else {
+
+                toast.error(err?.response?.data?.message)
+            }
+        }).then((res) => {
+            setcategoryList(res?.data?.data)
+        })
+
     }
-
-
-
-
     async function handleUpdate(values) {
         setLoading(true)
         const formData = new FormData();
-
         formData.append('backGroundImage', values.backGroundImage);
-
         for (let index = 0; index < values.images.length; index++) {
             formData.append(`images`, values.images[index]);
 
         }
-
         formData.append('name', values.name)
         formData.append('description', values.description)
         formData.append('About', values.About)
         formData.append('category', values.category)
-
         const url = `https://dalilalhafr.com/api/items/updateItem/${values._id}`;
-
         try {
             const response = await request
                 .patch(url)
                 .set('Authorization', `Bearer ${token}`)
                 .send(formData);
 
-            toast.success(response.body.message)
-            dispatch(getAllItems());
+            toast.success(response?.body?.message)
+            getAllItems();
             setLoading(false);
             setUpdateMood(false);
         } catch (error) {
-            // Handle error
+            if (error?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                toast.error(error?.response?.data?.message)
+            } else {
+
+                toast.error(error?.response?.data?.message)
+            }
         }
-
-        // await fetch(`https://dalilalhafr.com/api/items/updateItem/${values._id}`, {
-        //     method: 'PATCH',
-        //     headers: headers,
-        //     body: formData
-        // })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         console.log('Upload successful:', data);
-        //         if (data.status == false) {
-        //             toast.error(data.message)
-        //         } else if (data.status == true) {
-        //             toast.success(data.message)
-        //             dispatch(getAllItems())
-        //         }
-        //         setLoading(false)
-        //         setAddImageMood(false)
-        //         formik.resetForm()
-        //         console.log(data);
-        //     })
-        //     .catch(error => {
-        //         console.error('Error uploading file:', error);
-        //         // Handle error
-        //     });
-
-
-
     }
     const updateItem = (index) => {
         setUpdateMood(true)
@@ -116,7 +131,6 @@ export default function Items() {
         backGroundImage: Yup.mixed().required('backGroundImage is required'),
         images: Yup.mixed().required('images is required')
     })
-
     let formik4 = useFormik({
         initialValues: {
             item: {
@@ -132,27 +146,36 @@ export default function Items() {
         onSubmit: handleUpdate,
         validationSchema: validationUpdateSchema
     })
-
-
     async function handleAdd(values) {
         setLoading(true)
-        let { data } = await axios.post(`https://dalilalhafr.com/api/items/addItem`, {
+        await axios.post(`https://dalilalhafr.com/api/items/addItem`, {
             name: values.name,
             description: values.description,
             category: values.category,
             About: values.About
 
-        }, { headers })
-        formik2.resetForm()
-        toast.success(data.message)
-        setLoading(false)
-        setAddMood(false)
-        setAddImageMood(true)
-        formik3.setValues({
-            _id: data.data._id
-        })
+        }, { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
+            } else {
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
 
-        dispatch(getAllItems())
+            }
+        }).then((res) => {
+            formik2.resetForm()
+            toast.success(res?.data?.message)
+            setLoading(false)
+            setAddMood(false)
+            setAddImageMood(true)
+            formik3.setValues({
+                _id: res?.data?.data?._id
+            })
+            getAllItems()
+        })
 
 
     }
@@ -175,17 +198,23 @@ export default function Items() {
         onSubmit: handleAdd,
         validationSchema: validationAddSchema
     })
-
-
     async function deleteItem(index) {
-        let { data } = await axios.delete(`https://dalilalhafr.com/api/items/deleteItem/${index}`, { headers })
-        toast.success("item is deleted")
-        dispatch(getAllItems())
+        await axios.delete(`https://dalilalhafr.com/api/items/deleteItem/${index}`, { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                toast.error(err?.response?.data?.message)
+            } else {
+                toast.error(err?.response?.data?.message)
+
+            }
+        }).then((res) => {
+            toast.success(res?.data?.message)
+            getAllItems()
+        })
+
 
     }
-
-
-
     let validationAddImageSchema = Yup.object({
         backGroundImage: Yup.mixed().required('backGround Image is required'),
         images: Yup.mixed().required('images is required please upload at least one image')
@@ -223,45 +252,45 @@ export default function Items() {
                 .set('Authorization', `Bearer ${token}`)
                 .send(formData);
 
-            toast.success(response.body.message)
+            toast.success(response?.body?.message)
             setLoading(false);
             dispatch(getAllItems());
             setAddImageMood(false);
         } catch (error) {
-            // Handle error
+            if (error?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                toast.error(error?.response?.data?.message)
+                setLoading(false)
+            } else {
+                toast.error(error?.response?.data?.message)
+                setLoading(false)
+            }
         }
     };
 
-
-
-
-
-
-
-
-
-
     return <>
+
         {UpdateMood ?
             <div className='w-100 h-100  bg-body-secondary bg-opacity-50 fixed-top row justify-content-center align-content-center'>
                 <div className="col-4 formRes">
 
                     <form onSubmit={formik4.handleSubmit} className='w-100 my-5 bg-light  p-5 rounded-3 shadow '>
 
-                        <label for="name" class="form-label">name</label>
+                        <label for="name" className="form-label">name</label>
                         <input className='form-control' type="text" name='name' id='name' value={formik4.values.name} onChange={formik4.handleChange} onBlur={formik4.handleBlur} />
                         {formik4.errors.name && formik4.touched.name ? <div className='form-text text-danger'>{formik4.errors.name}</div> : null}
 
-                        <label for="description" class="form-label">description</label>
+                        <label for="description" className="form-label">description</label>
                         <input className='form-control' type="text" name='description' id='description' value={formik4.values.description} onChange={formik4.handleChange} onBlur={formik4.handleBlur} />
                         {formik4.errors.description && formik4.touched.description ? <div className='form-text text-danger'>{formik4.errors.description}</div> : null}
 
-                        <label for="About" class="form-label">About</label>
+                        <label for="About" className="form-label">About</label>
                         <input className='form-control' type="text" name='About' id='About' value={formik4.values.About} onChange={formik4.handleChange} onBlur={formik4.handleBlur} />
                         {formik4.errors.About && formik4.touched.About ? <div className='form-text text-danger'>{formik4.errors.About}</div> : null}
 
-                        <label for="category" class="form-label mt-2">category</label>
-                        <select class="form-select" aria-label="Default select example" name='category' id='category' value={formik4.values.category} onChange={formik4.handleChange} onBlur={formik4.handleBlur}>
+                        <label for="category" className="form-label mt-2">category</label>
+                        <select className="form-select" aria-label="Default select example" name='category' id='category' value={formik4.values.category} onChange={formik4.handleChange} onBlur={formik4.handleBlur}>
 
                             <option disabled selected>select Category</option>
                             {categoryList.map((cate) => {
@@ -270,7 +299,7 @@ export default function Items() {
 
                         </select>
                         {formik4.errors.category && formik4.touched.category ? <div className='form-text text-danger'>{formik4.errors.category}</div> : null}
-                        <label for="backGroundImage" class="form-label">backGroundImage</label>
+                        <label for="backGroundImage" className="form-label">backGroundImage</label>
                         <input
                             type="file"
                             name="backGroundImage"
@@ -278,7 +307,7 @@ export default function Items() {
                             onChange={(event) => formik4.setFieldValue('backGroundImage', event.currentTarget.files[0])}
                             onBlur={formik4.handleBlur}
                         />
-                        <label for="images" class="form-label">images</label>
+                        <label for="images" className="form-label">images</label>
                         <input
                             type="file"
                             name="images"
@@ -305,22 +334,22 @@ export default function Items() {
                 <div className="col-4 formRes">
                     <form onSubmit={formik2.handleSubmit} className='w-100 my-5 bg-light  p-5 rounded-3 shadow '>
 
-                        <label for="name" class="form-label">name</label>
+                        <label for="name" className="form-label">name</label>
                         <input className='form-control' type="text" name='name' id='name' value={formik2.values.name} onChange={formik2.handleChange} onBlur={formik2.handleBlur} />
                         {formik2.errors.name && formik2.touched.name ? <div className='form-text text-danger'>{formik2.errors.name}</div> : null}
 
-                        <label for="description" class="form-label mt-2">description</label>
+                        <label for="description" className="form-label mt-2">description</label>
                         <input className='form-control' type="text" name='description' id='description' value={formik2.values.description} onChange={formik2.handleChange} onBlur={formik2.handleBlur} />
                         {formik2.errors.description && formik2.touched.description ? <div className='form-text text-danger'>{formik2.errors.description}</div> : null}
 
-                        <label for="About" class="form-label mt-2">About</label>
+                        <label for="About" className="form-label mt-2">About</label>
                         <input className='form-control' type="text" name='About' id='About' value={formik2.values.About} onChange={formik2.handleChange} onBlur={formik2.handleBlur} />
                         {formik2.errors.About && formik2.touched.About ? <div className='form-text text-danger'>{formik2.errors.About}</div> : null}
 
-                        <label for="category" class="form-label mt-2">category</label>
+                        <label for="category" className="form-label mt-2">category</label>
 
 
-                        <select class="form-select" aria-label="Default select example" name='category' id='category' value={formik2.values.category} onChange={formik2.handleChange} onBlur={formik2.handleBlur}>
+                        <select className="form-select" aria-label="Default select example" name='category' id='category' value={formik2.values.category} onChange={formik2.handleChange} onBlur={formik2.handleBlur}>
 
                             <option disabled selected>select Category</option>
                             {categoryList.map((cate) => {
@@ -355,7 +384,7 @@ export default function Items() {
                 <div className="col-4 formRes">
                     <form onSubmit={formik3.handleSubmit} className='w-100 my-5 bg-light  p-5 rounded-3 shadow '>
 
-                        <label for="backGroundImage" class="form-label">backGroundImage</label>
+                        <label for="backGroundImage" className="form-label">backGroundImage</label>
                         <input
                             type="file"
                             name="backGroundImage"
@@ -366,7 +395,7 @@ export default function Items() {
 
 
 
-                        <label for="images" class="form-label">images</label>
+                        <label for="images" className="form-label">images</label>
                         <input
                             type="file"
                             name="images"
@@ -392,17 +421,13 @@ export default function Items() {
             </div>
             : null}
 
-
-
-
-
         <div className="ItemComponent">
             <h1 className='text-center'>Items</h1>
-            {loading ? <div className='col-12 text-center my-5 py-5'>
+            {GetLoading ? <div className='col-12 text-center my-5 py-5'>
                 <i className='fa fa-spin fa-spinner fa-3x text-success'></i>
             </div> : <div className='col-11 mx-auto my-5 tableCss'>
                 <button onClick={() => { setAddMood(true) }} className='btn btn-outline-success w-100'>Add new Item</button>
-                {ItemsList.length ? <table class="table table-striped table-hover text-center my-3">
+                {ItemsList.length ? <table className="table table-striped table-hover text-center my-3">
                     <thead>
                         <tr className='text-capitalize'>
                             <th scope="col">#</th>
@@ -433,11 +458,11 @@ export default function Items() {
                                     {item.ratingsAverage}</td>
                                 <td >{item.ratingsQuantity}</td>
                                 <td>
-                                    <div class="dropdown">
-                                        <button class="btn btn-outline-secondary " type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa-solid fa-list fa-lg"></i>
+                                    <div className="dropdown">
+                                        <button className="btn btn-outline-secondary " type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i className="fa-solid fa-list fa-lg"></i>
                                         </button>
-                                        <ul class="dropdown-menu">
+                                        <ul className="dropdown-menu">
                                             <li onClick={() => deleteItem(item._id)} className="dropdown-item">Delete</li>
                                             <li onClick={() => updateItem(index)} className="dropdown-item">Update</li>
                                             <li className="dropdown-item"><Link to={'/oneItem/' + item._id} className='text-decoration-none text-black'>Details</Link></li>
@@ -460,8 +485,6 @@ export default function Items() {
 
             </div>}
         </div>
-
-
 
 
     </>

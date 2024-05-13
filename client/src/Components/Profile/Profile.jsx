@@ -10,23 +10,48 @@ import { getProfleData } from '../../redux/slices/ProfileSlice.js';
 
 
 
-export default function Profile() {
+export default function Profile({ setUserData }) {
 
-    let { ProfileList } = useSelector((state) => state.ProfileReduser)
     const [UpdatePasssMood, setUpdatePassMood] = useState(false)
     const [UpdateMood, setUpdateMood] = useState(false)
     const [Loading, setLoading] = useState(false)
+    const [loading, setloading] = useState(false)
+    const [ProfileList, setProfileList] = useState()
 
 
-    let dispatch = useDispatch()
+
+
     let token = localStorage.getItem('userToken')
     let headers = {
         Authorization: `Bearer ${token}`
     }
 
+    async function getProfleData() {
+        setloading(true)
+        let token = localStorage.getItem('userToken')
+        let headers = {
+            Authorization: `Bearer ${token}`
+        }
+        await axios(`https://dalilalhafr.com/api/auth/profilePage`, { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                setloading(false)
+                toast.error(err?.response?.data?.message)
+            } else {
+                setloading(false)
+                toast.error(err?.response?.data?.message)
+
+            }
+        }).then((res) => {
+            setProfileList(res?.data?.data)
+            setloading(false)
+        })
+
+    }
 
     useEffect(() => {
-        dispatch(getProfleData())
+        getProfleData()
     }, [])
 
 
@@ -34,15 +59,30 @@ export default function Profile() {
 
     async function handleUpdatePass(values) {
         setLoading(true)
-        let { data } = await axios.patch(`https://dalilalhafr.com/api/auth/updatePassword`, {
+        await axios.patch(`https://dalilalhafr.com/api/auth/updatePassword`, {
             currentPassword: values.currentPassword,
             newPassword: values.newPassword,
             newPasswordConfirm: values.newPasswordConfirm
-        }, { headers })
-        formik.resetForm()
-        toast.success(data.message)
-        setLoading(false)
-        setUpdatePassMood(false)
+        }, { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
+            } else {
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
+
+            }
+        }).then((res) => {
+            formik.resetForm()
+            toast.success(res?.data?.message)
+            setLoading(false)
+            setUpdatePassMood(false)
+            localStorage.clear()
+            setUserData(null)
+        })
+
     }
 
     let validationSchema = Yup.object({
@@ -70,15 +110,28 @@ export default function Profile() {
         setLoading(true)
 
         let formData = new FormData()
-        formData.append('profileImage', values.profileImage)
+        formData.append('profileImage', values?.profileImage)
         formData.append('name', values.name)
 
-        let { data } = await axios.patch(`https://dalilalhafr.com/api/auth/updateUser`, formData, { headers })
-        formik2.resetForm()
-        toast.success(data.message)
-        dispatch(getProfleData())
-        setLoading(false)
-        setUpdateMood(false)
+        await axios.patch(`https://dalilalhafr.com/api/auth/updateUser`, formData, { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
+            } else {
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
+
+            }
+        }).then((res) => {
+            formik2.resetForm()
+            toast.success(res?.data?.message)
+            getProfleData()
+            setLoading(false)
+            setUpdateMood(false)
+        })
+
 
     }
 
@@ -170,17 +223,18 @@ export default function Profile() {
 
         <div className=' w-100'>
             <h1 className='text-center'>Profile</h1>
-            
-            <div className='col-11 bg-light shadow-lg  mx-auto justify-content-evenly  p-5 rounded-5 mt-5 '>
+            {loading ? <div className='col-12 text-center my-5 py-5'>
+                <i className='fa fa-spin fa-spinner fa-3x text-success'></i>
+            </div> : <div className='col-11 bg-light shadow-lg  mx-auto justify-content-evenly  p-5 rounded-5 mt-5 '>
                 <div className="row profileRes">
                     <div className='col-4 profileRes1  mx-auto'>
                         <div className='text-center  p-3 shadow-lg rounded-4'>
                             <div className='col-9 mx-auto'>
 
-                                <img className='img-fluid rounded-circle shadow-lg ' src={ProfileList.profileImage} alt="" />
+                                <img className='img-fluid rounded-circle shadow-lg ' src={ProfileList?.profileImage} alt="" />
                             </div>
-                            <h3 className='mt-3 fw-bolder text-capitalize'>{ProfileList.name}</h3>
-                            <p>{ProfileList.role}</p>
+                            <h3 className='mt-3 fw-bolder text-capitalize'>{ProfileList?.name}</h3>
+                            <p>{ProfileList?.role}</p>
                             <button onClick={() => { setUpdateMood(true) }} className='btn btn-info rounded-5 col-8 my-2'>Update Profile</button>
                         </div>
                     </div>
@@ -189,15 +243,15 @@ export default function Profile() {
                             <tbody>
                                 <tr className='align-baseline'>
                                     <td >Name</td>
-                                    <td>{ProfileList.name}</td>
+                                    <td>{ProfileList?.name}</td>
                                 </tr>
                                 <tr className='align-baseline'>
                                     <td >Email</td>
-                                    <td>{ProfileList.email}</td>
+                                    <td>{ProfileList?.email}</td>
                                 </tr>
                                 <tr className='align-baseline'>
                                     <td >Role</td>
-                                    <td>{ProfileList.role}</td>
+                                    <td>{ProfileList?.role}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -206,7 +260,7 @@ export default function Profile() {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>}
         </div>
     </>
 }

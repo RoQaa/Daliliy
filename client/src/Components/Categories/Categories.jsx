@@ -3,20 +3,20 @@ import { Formik, Form, Field, ErrorMessage, useFormik } from 'formik';
 import * as Yup from 'yup';
 import styles from './Categories.css'
 import axios from "axios";
-import testImage from '../../images/test.jpeg'
 import { toast } from "react-hot-toast";
 
-import { useDispatch, useSelector } from 'react-redux'
-import { getAllCategorys } from '../../redux/slices/CategorySlice.js';
 
 
-export default function Categories() {
+export default function Categories({ setUserData }) {
 
     const [UpdateMood, setUpdateMood] = useState(false)
     const [AddMood, setAddMood] = useState(false)
     const [AddImageMood, setAddImageMood] = useState(false)
     const [CateId, setCateId] = useState(null)
     const [Loading, setLoading] = useState(false)
+    const [CategorysList, setCategorysList] = useState([])
+    const [loading, setloading] = useState(false)
+
 
 
 
@@ -28,30 +28,61 @@ export default function Categories() {
     }
 
 
-    let { CategorysList, loading } = useSelector((state) => state.CategoryReduser)
-    let dispatch = useDispatch()
+
+    async function getAllCategorys() {
+        setloading(true)
+        let token = localStorage.getItem('userToken')
+        let headers = {
+            Authorization: `Bearer ${token}`
+        }
+        await axios('https://dalilalhafr.com/api/cats/getCats', { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                setloading(false)
+                toast.error(err?.response?.data?.message)
+            } else {
+                setloading(false)
+                toast.error(err?.response?.data?.message)
+            }
+
+        }).then((res) => {
+            setCategorysList(res?.data?.data)
+            setloading(false)
+        })
 
 
+
+    }
     useEffect(() => {
-        dispatch(getAllCategorys())
+        getAllCategorys()
     }, [])
-
-
-
     async function handleUpdate(values) {
         setLoading(true)
         let formData = new FormData();
-
         formData.append('title', values.title);
         if (values.image != "") {
             formData.append('image', values.image);
         }
-        let { data } = await axios.patch(`https://dalilalhafr.com/api/cats/updateCategory/${values._id}`, formData, { headers })
-        formik.resetForm()
-        toast.success(data.message)
-        dispatch(getAllCategorys())
-        setLoading(false)
-        setUpdateMood(false)
+        await axios.patch(`https://dalilalhafr.com/api/cats/updateCategory/${values._id}`, formData, { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
+            } else {
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
+            }
+
+        }).then((res) => {
+            formik.resetForm()
+            toast.success(res?.data?.message)
+            getAllCategorys()
+            setLoading(false)
+            setUpdateMood(false)
+        })
+
 
     }
     let validationSchema = Yup.object({
@@ -80,12 +111,21 @@ export default function Categories() {
 
         });
     };
-
-
     async function deleteCate(index) {
-        let { data } = await axios.delete(`https://dalilalhafr.com/api/cats/deleteCategory/${index}`, { headers })
-        toast.success(data.message)
-        dispatch(getAllCategorys())
+        await axios.delete(`https://dalilalhafr.com/api/cats/deleteCategory/${index}`, { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                toast.error(err?.response?.data?.message)
+            } else {
+                toast.error(err?.response?.data?.message)
+            }
+        }).then((res) => {
+            toast.success(res?.data?.message)
+            getAllCategorys()
+        })
+
+
 
 
 
@@ -95,24 +135,31 @@ export default function Categories() {
 
     async function handleAdd(values) {
         setLoading(true)
+        await axios.post(`https://dalilalhafr.com/api/cats/addCat`, { title: values.title }, { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
+            } else {
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
+            }
+        }).then((res) => {
+            if (res?.data?.status == false) {
+                toast.error(res?.data?.message)
+            }
+            setCateId(res?.data?.data?._id)
+            setLoading(false)
+            setAddMood(false)
+            setAddImageMood(true)
+            toast.success(res?.data?.message)
+            formik2.resetForm()
+        })
 
-
-
-        let { data } = await axios.post(`https://dalilalhafr.com/api/cats/addCat`, { title: values.title }, { headers })
-
-        if (data.status == false) {
-            toast.error(data.message)
-        }
-        setCateId(data.data._id)
-        toast.success(data.message)
-
-        formik2.resetForm()
-
-        setLoading(false)
-        setAddMood(false)
-        setAddImageMood(true)
 
     }
+
     let validationAddSchema = Yup.object({
         title: Yup.string().required('title is required'),
     })
@@ -147,26 +194,31 @@ export default function Categories() {
         let formData = new FormData();
 
         formData.append('image', values.image);
-        let { data } = await axios.patch(`https://dalilalhafr.com/api/cats/updateCategory/${CateId}`, formData, { headers }).catch((err)=>{
-            toast.error("sorry you can add another image")
+        await axios.patch(`https://dalilalhafr.com/api/cats/updateCategory/${CateId}`, formData, { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
+            } else {
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
+            }
+        }).then((res) => {
+            if (res?.data?.status == false) {
+                toast.error(res?.data?.message)
+                setCateId(null)
+
+            } else if (res?.data?.status == true) {
+                toast.success(res?.data?.message)
+                setCateId(null)
+            }
+            getAllCategorys()
+            setLoading(false)
+            setAddImageMood(false)
+            formik3.resetForm()
         })
-        if (data.status == false) {
-            toast.error(data.message)
-            setCateId(null)
-
-        } else if (data.status == true) {
-            toast.success(data.message)
-            setCateId(null)
-        }
-
-        dispatch(getAllCategorys())
-        setLoading(false)
-        setAddImageMood(false)
-
-        formik3.resetForm()
-
     }
-
     return <>
         {UpdateMood ?
             <div className='w-100 h-100  bg-body-secondary bg-opacity-50 fixed-top row justify-content-center align-content-center'>
@@ -282,7 +334,7 @@ export default function Categories() {
 
             <button onClick={() => { setAddMood(true) }} className='btn btn-outline-success w-100'>Add new Categore</button>
 
-{CategorysList.length ? <table class="table table-striped table-hover text-center my-3">
+            {CategorysList.length ? <table class="table table-striped table-hover text-center my-3">
                 <thead>
                     <tr className='text-capitalize'>
                         <th scope="col-2">#</th>
@@ -296,7 +348,7 @@ export default function Categories() {
                 <tbody>
 
                     {CategorysList.map((cate, index) => {
-                        return <tr key={cate._id} className='align-baseline'>
+                        return <tr key={cate._id} className='align-baseline '>
                             <th scope="row">{index}</th>
                             <td>{cate.title}</td>
                             <td><img className='cate-img img-fluid' src={cate.image} alt="" /></td>
@@ -322,7 +374,7 @@ export default function Categories() {
 
                 </tbody>
             </table> : <h2 className='text-center my-5'>No Categories</h2>}
-            
+
 
         </div>}
 

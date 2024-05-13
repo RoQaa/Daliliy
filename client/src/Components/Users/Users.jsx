@@ -4,42 +4,52 @@ import * as Yup from 'yup'
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
-import { useDispatch, useSelector } from 'react-redux'
-import { getAllUsers } from '../../redux/slices/UserSlice.js';
 
 
 
 
-export default function Users() {
+export default function Users({ setUserData }) {
     const [UpdateMood, setUpdateMood] = useState(false)
     const [Loading, setLoading] = useState(false)
-
+    const [loading, setloading] = useState(false)
+    const [usersList, setusersList] = useState([])
     const [roleList, setroleList] = useState(['user', 'admin', 'manger'])
     let token = localStorage.getItem('userToken')
-
-
     let headers = {
         Authorization: `Bearer ${token}`
     }
 
+    async function getAllUsers() {
+        setloading(true)
+        let token = localStorage.getItem('userToken')
+        let headers = {
+            Authorization: `Bearer ${token}`
+        }
+        await axios('https://dalilalhafr.com/api/auth/getUsers', { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                setloading(false)
+                toast.error(err?.response?.data?.message)
+            } else {
+                setloading(false)
+                toast.error(err?.response?.data?.message)
+            }
+        }).then((res) => {
+            setusersList(res?.data?.data)
+            setloading(false)
+        })
 
-    let { usersList, loading } = useSelector((state) => state.userReduser)
-    let dispatch = useDispatch()
-
+    }
     useEffect(() => {
-        dispatch(getAllUsers())
+        getAllUsers()
     }, [])
-
-
-
-
     let validationSchema = Yup.object({
         name: Yup.string().required('name is required'),
         role: Yup.string().required('role is required'),
         isActive: Yup.boolean()
 
     })
-
     let formik = useFormik({
         initialValues: {
             user: {
@@ -55,8 +65,6 @@ export default function Users() {
         onSubmit: handleUpdate,
         validationSchema
     })
-
-
     const updateUser = (index) => {
         setUpdateMood(true)
         const selectedItem = usersList[index];
@@ -68,44 +76,60 @@ export default function Users() {
             isActive: selectedItem.isActive
         });
     };
-
     async function deleteUser(index) {
-        let { data } = await axios.delete(`https://dalilalhafr.com/api/auth/deleteUser/${index}`, { headers })
-        if (data.status == true) {
-            toast.success(data.message)
-            dispatch(getAllUsers())
-        } else if (data.status == false) {
-            toast.success(data.message)
-        } else {
-            toast.success("something wrong please try again")
+        await axios.delete(`https://dalilalhafr.com/api/auth/deleteUser/${index}`, { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                toast.error(err?.response?.data?.message)
+            } else {
+                toast.error(err?.response?.data?.message)
+            }
+        }).then((res) => {
+            if (res?.data?.status == true) {
+                toast.success(res?.data?.message)
+                getAllUsers()
+            } else if (res?.data?.status == false) {
+                toast.success(res?.data?.message)
+            } else {
+                toast.error("something wrong please try again")
+            }
+        })
 
-        }
     }
-
-
     async function handleUpdate(values) {
-
         setLoading(true)
-        let { data } = await axios.patch(`https://dalilalhafr.com/api/auth/updateUser/${values._id}`, { name: values.name, role: values.role, isActive: values.isActive }, { headers })
+        await axios.patch(`https://dalilalhafr.com/api/auth/updateUser/${values._id}`, { name: values.name, role: values.role, isActive: values.isActive }, { headers }).catch((err) => {
+            if (err?.response?.status == 401) {
+                localStorage.clear()
+                setUserData(null)
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
+            } else {
+                setLoading(false)
+                toast.error(err?.response?.data?.message)
+            }
+        }).then((res) => {
+            if (res?.data?.status == true) {
+                toast.success(res?.data?.message)
+                getAllUsers()
+                setLoading(false)
+                setUpdateMood(false)
+            } else if (res?.data?.status == false) {
+                toast.error(res?.data?.message)
+            } else {
+                toast.error(res?.data?.message)
+            }
+            formik.setValues({
+                _id: "",
+                name: "",
+                email: "",
+                role: "",
+                isActive: true
+            });
+        })
 
-        if (data.status == true) {
-            toast.success("Updated Successfully")
-            dispatch(getAllUsers())
-            setLoading(false)
-            setUpdateMood(false)
 
-        } else if (data.status == false) {
-            toast.error("Updated fail")
-        } else {
-            toast.error("Try again")
-        }
-        formik.setValues({
-            _id: "",
-            name: "",
-            email: "",
-            role: "",
-            isActive: true
-        });
     }
 
     return <>

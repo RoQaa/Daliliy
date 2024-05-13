@@ -2,40 +2,46 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 
-const body = { title: "All" }
-export let getAllItems = createAsyncThunk('item/getAllItems', async () => {
 
+export let getAllItems = createAsyncThunk('item/getAllItems', async () => {
     let token = localStorage.getItem('userToken')
     let headers = {
         Authorization: `Bearer ${token}`
     }
-
-    let { data } = await axios.get('https://dalilalhafr.com/api/items/getAllitems', { headers })
-    return data;
+    let res = await axios.get('https://dalilalhafr.com/api/items/getAllitems', { headers }).catch((err)=>{
+        return err
+    })
+    return res;
 })
 export let getOneItem = createAsyncThunk('item/getOneItem', async (id) => {
     let token = localStorage.getItem('userToken')
     let headers = {
         Authorization: `Bearer ${token}`
     }
-
-    let { data } = await axios(`https://dalilalhafr.com/api/items/getSpecificItem/${id}`,{headers})
+    let { data } = await axios(`https://dalilalhafr.com/api/items/getSpecificItem/${id}`, { headers })
     return data;
 })
 
 let ItemSlice = createSlice({
     name: "item",
-    initialState: { ItemsList: [], OneItemData: {}, loading: false },
+    initialState: { ItemsList: [], OneItemData: {}, loading: false, authError: false, authErrorMsg: null },
     extraReducers: (bulider) => {
         bulider.addCase(getAllItems.pending, (state) => {
             state.loading = true
         })
         bulider.addCase(getAllItems.fulfilled, (state, action) => {
-            let { data } = action.payload
-            state.ItemsList = data
-            state.loading = false
 
+            console.log(action);
+            if(action?.payload?.response?.status == 401){
+              state.authError=true
+              state.authErrorMsg=action?.payload?.response?.data?.message
+            }else{
+                state.ItemsList=action?.payload?.data?.data
+            }
+            state.loading = false
         })
+        
+
         bulider.addCase(getOneItem.pending, (state) => {
             state.loading = true
         })

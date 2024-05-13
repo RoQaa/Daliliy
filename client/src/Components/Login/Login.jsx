@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import * as Yup from 'yup'
@@ -20,7 +20,7 @@ export default function Login({ saveData }) {
     let { data } = await axios.post('https://dalilalhafr.com/api/auth/login', values).catch((err) => {
       setmessageErr2(`${err.response.data.message}`)
       setloading(false)
-      toast.success("srever error please try again")
+      toast.error("srever error please try again")
     })
 
     if (data.status == true) {
@@ -55,6 +55,12 @@ export default function Login({ saveData }) {
     onSubmit: handelLogin
 
   })
+useEffect(() => {
+  if (localStorage.getItem('userToken') != null) {
+    navigate('/')
+  }
+
+}, [])
 
 
   return <>

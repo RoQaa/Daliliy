@@ -11,9 +11,12 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 
-export default function OneItem() {
+export default function OneItem({ setUserData }) {
   const [UpdateMood, setUpdateMood] = useState(false)
   const [Loading, setLoading] = useState(false)
+  const [loading, setloading] = useState(false)
+  const [OneItemData, setOneItemData] = useState({})
+
 
 
   let token = localStorage.getItem('userToken')
@@ -22,8 +25,6 @@ export default function OneItem() {
     Authorization: `Bearer ${token}`
   }
   let { id } = useParams()
-  let dispatch = useDispatch()
-  let { OneItemData } = useSelector((state) => state.ItemReduser)
 
 
 
@@ -61,13 +62,49 @@ export default function OneItem() {
 
 
   async function deleteReview(index) {
-    let { data } = await axios.delete(`https://dalilalhafr.com/api/reviews/deleteReview/${index}`, { headers })
-    toast.success(data.message)
-    dispatch(getOneItem(id))
+    await axios.delete(`https://dalilalhafr.com/api/reviews/deleteReview/${index}`, { headers }).catch((err) => {
+      if (err?.response?.status == 401) {
+        localStorage.clear()
+        setUserData(null)
+        toast.error(err?.response?.data?.message)
+      } else {
+        toast.error(err?.response?.data?.message)
+
+      }
+    }).then((res) => {
+      toast.success(res?.data?.message)
+      getOneItem(id)
+    })
+
+  }
+
+  async function getOneItem(id) {
+    setloading(true)
+    let token = localStorage.getItem('userToken')
+    let headers = {
+      Authorization: `Bearer ${token}`
+    }
+    await axios(`https://dalilalhafr.com/api/items/getSpecificItem/${id}`, { headers }).catch((err) => {
+      if (err?.response?.status == 401) {
+        localStorage.clear()
+        setUserData(null)
+        setloading(false)
+        toast.error(err?.response?.data?.message)
+      } else {
+        setloading(false)
+        toast.error(err?.response?.data?.message)
+
+      }
+    }).then((res) => {
+      setOneItemData(res?.data?.data)
+      setloading(false)
+
+    })
+
   }
 
   useEffect(() => {
-    dispatch(getOneItem(id))
+    getOneItem(id)
 
 
   }, [])
@@ -77,16 +114,28 @@ export default function OneItem() {
 
   async function handleUpdate(values) {
     setLoading(true)
-    let { data } = await axios.patch(`https://dalilalhafr.com/api/reviews/updateReview/${values._id}`, {
+    await axios.patch(`https://dalilalhafr.com/api/reviews/updateReview/${values._id}`, {
       review: values.review,
       rating: values.rating
-    }, { headers })
-    formik.resetForm()
+    }, { headers }).catch((err) => {
+      if (err?.response?.status == 401) {
+        localStorage.clear()
+        setUserData(null)
+        setLoading(false)
+        toast.error(err?.response?.data?.message)
+      } else {
 
-    dispatch(getOneItem(id))
-    setLoading(false)
-    toast.success(data.message)
-    setUpdateMood(false)
+        setLoading(false)
+        toast.error(err?.response?.data?.message)
+      }
+    }).then((res) => {
+      formik.resetForm()
+      getOneItem(id)
+      setLoading(false)
+      toast.success(res?.data?.message)
+      setUpdateMood(false)
+    })
+
   }
   let validationSchema = Yup.object({
     review: Yup.string().required('review is required'),
@@ -147,87 +196,91 @@ export default function OneItem() {
 
 
     <div className="row container OneItemRes mx-auto align-items-center g-5 py-5 my-5">
-      <div className="col-md-6 col-lg-4 formRes ">
-        <div className='shadow-lg rounded-3 overflow-hidden p-5 h-75'>
-          <Slider {...settings}>
-            <img src={OneItemData.backGroundImage} alt="" srcset="" />
-            {OneItemData?.images?.map(img => {
-              return <img src={img} />
-            })}
+      {loading ? <div className='col-12 text-center my-5 py-5'>
+        <i className='fa fa-spin fa-spinner fa-3x text-success'></i>
+      </div> : <>
+        <div className="col-md-6 col-lg-4 formRes ">
+          <div className='shadow-lg rounded-3 overflow-hidden p-5 h-75'>
+            <Slider {...settings}>
+              <img src={OneItemData.backGroundImage} alt="" srcset="" />
+              {OneItemData?.images?.map(img => {
+                return <img src={img} />
+              })}
 
-          </Slider>
+            </Slider>
+          </div>
         </div>
-      </div>
-      <div className="col-md-6 col-lg-8 formRes">
-        <h3 className='fw-bolder'>{OneItemData.name}</h3>
-        <h6 className='py-2'>{OneItemData.description}</h6>
-        <span className='text-main'>{OneItemData.category?.title}</span>
-        <p>{OneItemData.About}</p>
-        <div className='d-flex justify-content-between py-2'>
-          <span>
-            <i className='fa fa-star text-warning mx-2'></i>
-            {OneItemData.ratingsAverage}
-          </span>
-        </div>
+        <div className="col-md-6 col-lg-8 formRes">
+          <h3 className='fw-bolder'>{OneItemData.name}</h3>
+          <h6 className='py-2'>{OneItemData.description}</h6>
+          <span className='text-main'>{OneItemData.category?.title}</span>
+          <p>{OneItemData.About}</p>
+          <div className='d-flex justify-content-between py-2'>
+            <span>
+              <i className='fa fa-star text-warning mx-2'></i>
+              {OneItemData.ratingsAverage}
+            </span>
+          </div>
 
-        <div className='p-5 shadow-lg rounded-3'>
-
+          <div className='p-5 shadow-lg rounded-3'>
 
 
-          <h2 className='mb-4'>Reviews</h2>
-          {OneItemData.reviews?.length ?
-            OneItemData.reviews.map(review => {
-              return <div key={review._id} className="card my-3">
-                <div className=" card-header">
-                  <div className="row align-items-center">
 
-                    <div className='col-1'>
-                      <img src={review?.user?.profileImage} className='img-fluid rounded-circle' alt="" srcset="" />
-                    </div>
-                    <div className="col-10 ">
-                      <h5 className="">{review?.user?.name}</h5>
-                    </div>
-                    <div className="col-1 ms-auto">
-                      <div class="dropdown ">
-                        <button class="btn btn-outline-secondary " data-bs-toggle="dropdown" aria-expanded="false" type="button" >
-                          <i class="fa-solid fa-list fa-lg" ></i>
-                        </button>
-                        <ul class="dropdown-menu">
-                          <li className="dropdown-item" onClick={() => { deleteReview(review?._id) }}>delete</li>
-                          <li className="dropdown-item" onClick={() => { updateCate(review._id, review.review, review.rating) }}>update</li>
-                        </ul>
+            <h2 className='mb-4'>Reviews</h2>
+            {OneItemData.reviews?.length ?
+              OneItemData.reviews.map(review => {
+                return <div key={review._id} className="card my-3">
+                  <div className=" card-header">
+                    <div className="row align-items-center">
+
+                      <div className='col-1'>
+                        <img src={review?.user?.profileImage} className='img-fluid rounded-circle' alt="" srcset="" />
+                      </div>
+                      <div className="col-9 ">
+                        <h5 className="">{review?.user?.name}</h5>
+                      </div>
+                      <div className="col-2">
+                        <div class="dropdown ">
+                          <button class="btn btn-outline-secondary " data-bs-toggle="dropdown" aria-expanded="false" type="button" >
+                            <i class="fa-solid fa-list fa-lg" ></i>
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li className="dropdown-item" onClick={() => { deleteReview(review?._id) }}>delete</li>
+                            <li className="dropdown-item" onClick={() => { updateCate(review._id, review.review, review.rating) }}>update</li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
-                  </div>
-
-                </div>
-
-                <div className="card-body">
-                  <div className="row justify-content-evenly">
-                    <div className='col-9' >
-                      <h6 className="card-title">{review?.review}</h6>
-
-                    </div>
-                    <div className='col-2'>
-                      <span>
-                        <i className='fa fa-star text-warning mx-2'></i>
-                        {review?.rating}
-                      </span>
-                    </div>
-
 
                   </div>
+
+                  <div className="card-body">
+                    <div className="row justify-content-evenly">
+                      <div className='col-9' >
+                        <h6 className="card-title">{review?.review}</h6>
+
+                      </div>
+                      <div className='col-2'>
+                        <span>
+                          <i className='fa fa-star text-warning mx-2'></i>
+                          {review?.rating}
+                        </span>
+                      </div>
+
+
+                    </div>
+                  </div>
                 </div>
-              </div>
-            })
-            : <>
-              <h2 className='text-center text-black-50'>this item don't have review</h2>
-            </>}
+              })
+              : <>
+                <h2 className='text-center text-black-50'>this item don't have review</h2>
+              </>}
+
+          </div>
+
 
         </div>
-
-
-      </div>
+      </>}
     </div>
   </>
 }

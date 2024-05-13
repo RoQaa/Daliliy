@@ -18,6 +18,7 @@ import { Toaster } from 'react-hot-toast';
 import Profile from './Components/Profile/Profile.jsx';
 import UpdateProfile from './Components/UpdateProfile/UpdateProfile.jsx';
 import OneItem from './Components/OneItem/OneItem.jsx';
+import { toast } from "react-hot-toast";
 
 
 function App() {
@@ -40,8 +41,17 @@ function App() {
     let headers = {
       Authorization: `Bearer ${token}`
     }
-    let { data } = await axios(`https://dalilalhafr.com/api/auth/profilePage`, { headers })
-    setUserInfo(data.data)
+    await axios(`https://dalilalhafr.com/api/auth/profilePage`, { headers }).catch((err) => {
+      if (err?.response?.status == 401) {
+        localStorage.clear()
+        setUserData(null)
+        toast.error(err?.response?.data?.message)
+      }else{
+        toast.error(err?.response?.data?.message)
+      }
+    }).then((res) => {
+      setUserInfo(res?.data?.data)
+    })
   }
 
   useEffect(() => {
@@ -57,13 +67,13 @@ function App() {
   let routes = createBrowserRouter([
     {
       path: '', element: <Layout userInfo={userInfo} getUserInfo={getUserInfo} userData={userData} setUserData={setUserData} />, children: [
-        { index: true, element: <ProtactecdRoute><Users /></ProtactecdRoute> },
-        { path: 'categories', element: <ProtactecdRoute> <Categories /> </ProtactecdRoute> },
-        { path: 'items', element:<ProtactecdRoute>  <Items/> </ProtactecdRoute>  },
-        { path: 'createUser', element: <ProtactecdRoute> <CreateUser />  </ProtactecdRoute> },
-        { path: 'profile', element: <ProtactecdRoute> <Profile />  </ProtactecdRoute> },
-        { path: 'updateProfile', element: <ProtactecdRoute> <UpdateProfile />  </ProtactecdRoute> },
-        { path: 'oneItem/:id', element: <ProtactecdRoute> <OneItem />  </ProtactecdRoute> },
+        { index: true, element: <ProtactecdRoute><Users setUserData={setUserData} /></ProtactecdRoute> },
+        { path: 'categories', element: <ProtactecdRoute> <Categories setUserData={setUserData} /> </ProtactecdRoute> },
+        { path: 'items', element: <ProtactecdRoute>  <Items setUserData={setUserData} /> </ProtactecdRoute> },
+        { path: 'createUser', element: <ProtactecdRoute> <CreateUser setUserData={setUserData} />  </ProtactecdRoute> },
+        { path: 'profile', element: <ProtactecdRoute> <Profile setUserData={setUserData} />  </ProtactecdRoute> },
+        { path: 'updateProfile', element: <ProtactecdRoute> <UpdateProfile setUserData={setUserData} />  </ProtactecdRoute> },
+        { path: 'oneItem/:id', element: <ProtactecdRoute> <OneItem setUserData={setUserData} />  </ProtactecdRoute> },
 
 
         { path: 'Login', element: <Login saveData={saveData} /> },
